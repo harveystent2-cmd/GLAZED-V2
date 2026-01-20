@@ -1,28 +1,44 @@
-// api/discord-token.js
-// Vercel Node.js Function (no framework needed)
-
 export default async function handler(req, res) {
-  try {
-    if (req.method !== "POST") {
-      res.status(405).json({ error: "method_not_allowed" });
-      return;
-    }
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    const { code, redirect_uri } = req.body || {};
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
+  }
+
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "method_not_allowed" });
+    return;
+  }
+
+  try {
+    const body = typeof req.body === "string"
+      ? JSON.parse(req.body)
+      : req.body;
+
+    const { code, redirect_uri } = body || {};
+
     if (!code || !redirect_uri) {
-      res.status(400).json({ error: "missing_code_or_redirect_uri" });
-      return;
+      return res.status(400).json({
+        error: "missing_code_or_redirect_uri",
+        got: { code: !!code, redirect_uri }
+      });
     }
 
     const client_id = process.env.DISCORD_CLIENT_ID;
     const client_secret = process.env.DISCORD_CLIENT_SECRET;
 
     if (!client_id || !client_secret) {
-      res.status(500).json({ error: "missing_server_env_vars" });
-      return;
+      return res.status(500).json({
+        error: "missing_env_vars",
+        has_client_id: !!client_id,
+        has_client_secret: !!client_secret
+      });
     }
 
-    const body = new URLSearchParams({
+    const params = new URLSearchParams({
       client_id,
       client_secret,
       grant_type: "authorization_code",
@@ -33,20 +49,18 @@ export default async function handler(req, res) {
     const r = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body
+      body: params
     });
 
     const data = await r.json();
 
     if (!r.ok) {
-      // Discord will return useful details here (invalid_grant, redirect_uri mismatch, etc.)
-      res.status(400).json({ error: "discord_token_exchange_failed", details: data });
-      return;
+      return res.status(400).json({
+        error: "discord_error",
+        status: r.status,
+        discord: data
+      });
     }
 
-    // Return token JSON to client (access_token, token_type, expires_in, refresh_token, scope)
     res.status(200).json(data);
-  } catch (e) {
-    res.status(500).json({ error: "server_error" });
-  }
-}
+  } catch (err) {
