@@ -11,27 +11,39 @@
         background:#0b0d10;color:#fff;font-family:Segoe UI,Arial;
       }
       .card{
-        width:min(620px,92vw);
+        width:min(720px,92vw);
         border:1px solid rgba(255,255,255,.10);
         border-radius:16px;
         background:rgba(20,24,28,.72);
         padding:18px;
       }
-      .small{opacity:.75;font-size:12px;margin-top:10px;word-break:break-word}
+      .small{opacity:.75;font-size:12px;margin-top:10px;word-break:break-word;white-space:pre-wrap}
+      .label{opacity:.65;font-size:12px;margin-top:12px}
+      .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
     </style>
   </head>
   <body>
     <div class="card">
       <div style="font-weight:700">Signing you in…</div>
       <div class="small" id="status"></div>
+
+      <div class="label">Redirect URI used</div>
+      <div class="small mono" id="redir"></div>
+
+      <div class="label">Debug</div>
+      <div class="small mono" id="debug"></div>
     </div>
 
     <script>
       const statusEl = document.getElementById("status");
+      const redirEl = document.getElementById("redir");
+      const debugEl = document.getElementById("debug");
+
       const KEY_TOKEN = "moltenhub.discord.token.v1";
       const KEY_STATE = "moltenhub.oauth.state.v1";
 
       function setStatus(s){ statusEl.textContent = s; }
+      function setDebug(s){ debugEl.textContent = s; }
 
       async function run() {
         const url = new URL(location.href);
@@ -39,10 +51,15 @@
         const state = url.searchParams.get("state");
         const expected = sessionStorage.getItem(KEY_STATE);
 
-        if (!code) { setStatus("Missing code."); return; }
-        if (!state || !expected || state !== expected) { setStatus("State mismatch. Go back and try again."); return; }
-
         const redirect_uri = `${location.origin}/callback`;
+        redirEl.textContent = redirect_uri;
+
+        if (!code) { setStatus("Missing code."); setDebug(location.href); return; }
+        if (!state || !expected || state !== expected) {
+          setStatus("State mismatch. Go back and try again.");
+          setDebug(`state=${state}\nexpected=${expected}`);
+          return;
+        }
 
         try {
           const res = await fetch("/api/discord-token", {
@@ -51,18 +68,24 @@
             body: JSON.stringify({ code, redirect_uri })
           });
 
+          const payloadText = await res.text();
+          let payload;
+          try { payload = JSON.parse(payloadText); } catch { payload = { raw: payloadText }; }
+
           if (!res.ok) {
-            setStatus("Token exchange failed. Check serverless env vars + redirect URI.");
+            setStatus("Token exchange failed.");
+            // This will often include: redirect_uri mismatch, invalid_grant, etc.
+            setDebug(JSON.stringify(payload, null, 2));
             return;
           }
 
-          const token = await res.json();
-          localStorage.setItem(KEY_TOKEN, JSON.stringify(token));
+          localStorage.setItem(KEY_TOKEN, JSON.stringify(payload));
           sessionStorage.removeItem(KEY_STATE);
 
           location.replace("/");
         } catch (e) {
           setStatus("Network error during token exchange.");
+          setDebug(String(e && e.message ? e.message : e));
         }
       }
 
