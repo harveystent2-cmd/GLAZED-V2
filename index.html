@@ -133,6 +133,7 @@
         background:rgba(10,12,14,.35);color:var(--muted);font-size:12px
       }
       .divider{height:1px;background:var(--stroke);margin:10px 0}
+      .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
     </style>
   </head>
 
@@ -152,7 +153,9 @@
                 <span class="pill">OAuth2</span>
                 <span class="pill">Required</span>
               </div>
+
               <div class="divider"></div>
+
               <div class="row" style="justify-content:space-between;">
                 <div>
                   <div class="h1" style="font-size:18px;">Sign in to continue</div>
@@ -160,6 +163,10 @@
                 </div>
                 <button id="btnLogin" class="btn primary">Login with Discord</button>
               </div>
+
+              <div class="small">Redirect URI (must be registered in Discord Portal)</div>
+              <div class="small mono" id="redirPreview"></div>
+
               <div id="loginStatus" class="small"></div>
             </div>
           </div>
@@ -257,13 +264,10 @@
 
     <script>
       // ----- CONFIG -----
-      // This is safe to be public (client_id is not secret).
-      // Put it here or set it as window.MOLTENHUB_CLIENT_ID via another script.
       const DISCORD_CLIENT_ID = "1463281825085522132";
       const DISCORD_INVITE = "https://discord.gg/JgfU7YGrmk";
 
-      // Redirect URL must match your Discord Developer Portal entry exactly.
-      // We compute it from current origin.
+      // IMPORTANT: This must match your Discord Developer Portal redirect exactly.
       const REDIRECT_URI = `${location.origin}/callback`;
 
       // ----- STORAGE -----
@@ -337,16 +341,6 @@
       }
 
       // ----- API HELPERS -----
-      async function exchangeCodeForTokenViaServer(code) {
-        const res = await fetch("/api/discord-token", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code, redirect_uri: REDIRECT_URI })
-        });
-        if (!res.ok) throw new Error("token_exchange_failed");
-        return await res.json();
-      }
-
       async function getIdentity(accessToken) {
         const res = await fetch("https://discord.com/api/users/@me", {
           headers: { Authorization: `Bearer ${accessToken}` }
@@ -424,6 +418,9 @@
 
       // ----- BOOT -----
       async function bootstrap() {
+        // show redirect uri so you can copy it into Discord Portal
+        document.getElementById("redirPreview").textContent = REDIRECT_URI;
+
         // wire tabs
         document.querySelectorAll(".tabBtn").forEach((btn) => {
           btn.addEventListener("click", () => {
