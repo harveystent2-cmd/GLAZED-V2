@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoltenHub - Callback</title>
+    <style>
+      :root{color-scheme:dark}
+      body{
+        margin:0;height:100vh;display:grid;place-items:center;
+        background:#0b0d10;color:#fff;font-family:Segoe UI,Arial;
+      }
+      .card{
+        width:min(620px,92vw);
+        border:1px solid rgba(255,255,255,.10);
+        border-radius:16px;
+        background:rgba(20,24,28,.72);
+        padding:18px;
+      }
+      .small{opacity:.75;font-size:12px;margin-top:10px;word-break:break-word}
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div style="font-weight:700">Signing you in…</div>
+      <div class="small" id="status"></div>
+    </div>
+
+    <script>
+      const statusEl = document.getElementById("status");
+      const KEY_TOKEN = "moltenhub.discord.token.v1";
+      const KEY_STATE = "moltenhub.oauth.state.v1";
+
+      function setStatus(s){ statusEl.textContent = s; }
+
+      async function run() {
+        const url = new URL(location.href);
+        const code = url.searchParams.get("code");
+        const state = url.searchParams.get("state");
+        const expected = sessionStorage.getItem(KEY_STATE);
+
+        if (!code) { setStatus("Missing code."); return; }
+        if (!state || !expected || state !== expected) { setStatus("State mismatch. Go back and try again."); return; }
+
+        const redirect_uri = `${location.origin}/callback`;
+
+        try {
+          const res = await fetch("/api/discord-token", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code, redirect_uri })
+          });
+
+          if (!res.ok) {
+            setStatus("Token exchange failed. Check serverless env vars + redirect URI.");
+            return;
+          }
+
+          const token = await res.json();
+          localStorage.setItem(KEY_TOKEN, JSON.stringify(token));
+          sessionStorage.removeItem(KEY_STATE);
+
+          location.replace("/");
+        } catch (e) {
+          setStatus("Network error during token exchange.");
+        }
+      }
+
+      run();
+    </script>
+  </body>
+</html>

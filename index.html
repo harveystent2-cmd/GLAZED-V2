@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoltenHub</title>
+    <style>
+      :root{
+        --bg0:#050607; --bg1:#07090b;
+        --panel:rgba(14,17,20,.72); --panel2:rgba(18,22,26,.72);
+        --stroke:rgba(255,255,255,.08);
+        --text:rgba(255,255,255,.92);
+        --muted:rgba(255,255,255,.62);
+        --muted2:rgba(255,255,255,.45);
+        --accent:#73c7ff; --accent2:rgba(115,199,255,.18);
+        --shadow:0 16px 50px rgba(0,0,0,.55);
+        --radius2:22px;
+        --focus:0 0 0 3px rgba(115,199,255,.28);
+        color-scheme: dark;
+      }
+      *{box-sizing:border-box}
+      html,body{
+        height:100%; margin:0; overflow:hidden;
+        background:
+          radial-gradient(1200px 600px at 30% 10%, rgba(255,255,255,.05), transparent 60%),
+          radial-gradient(800px 500px at 80% 0%, rgba(115,199,255,.06), transparent 60%),
+          linear-gradient(180deg,var(--bg0),var(--bg1));
+        color:var(--text);
+        font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      }
+      .shell{position:relative;height:100%;width:100%;display:flex}
+      .bg-molten{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+      .bg-molten::before,.bg-molten::after{
+        content:""; position:absolute; width:860px;height:860px;border-radius:999px;
+        filter:blur(38px); opacity:.55; mix-blend-mode:screen;
+        background:
+          radial-gradient(circle at 30% 30%, rgba(255,120,90,.22), transparent 55%),
+          radial-gradient(circle at 70% 60%, rgba(115,199,255,.18), transparent 60%),
+          radial-gradient(circle at 50% 80%, rgba(180,120,255,.12), transparent 60%);
+        animation:drift 14s ease-in-out infinite;
+      }
+      .bg-molten::before{left:-240px;top:-280px}
+      .bg-molten::after{right:-260px;bottom:-320px;animation-duration:18s}
+      @keyframes drift{0%{transform:translate3d(0,0,0) rotate(0)}50%{transform:translate3d(40px,26px,0) rotate(8deg)}100%{transform:translate3d(0,0,0) rotate(0)}}
+      .dust{
+        position:absolute;inset:-10%;
+        background-image:
+          radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+          radial-gradient(rgba(115,199,255,.06) 1px, transparent 1px);
+        background-size:54px 54px,92px 92px;
+        background-position:0 0,20px 30px;
+        opacity:.35;
+        animation:dustmove 22s linear infinite;
+        pointer-events:none;
+      }
+      @keyframes dustmove{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-60px,-45px,0)}}
+
+      .left{
+        position:relative;z-index:1;width:260px;padding:16px;
+        border-right:1px solid var(--stroke);
+        background:linear-gradient(180deg, rgba(10,12,14,.55), rgba(10,12,14,.28));
+        backdrop-filter:blur(10px);
+      }
+      .main{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;min-width:0}
+      .content{flex:1;padding:18px;overflow:auto}
+
+      .brand{display:flex;align-items:center;gap:10px;padding:10px 10px 14px}
+      .brandDot{
+        width:12px;height:12px;border-radius:999px;
+        background:radial-gradient(circle at 30% 30%, #fff, var(--accent) 55%, rgba(0,0,0,0) 72%);
+        box-shadow:0 0 0 4px rgba(115,199,255,.08);
+      }
+      .brandTitle{font-weight:700;letter-spacing:.4px}
+      .brandSub{font-size:12px;color:var(--muted2);margin-top:1px}
+
+      .card{
+        border-radius:var(--radius2);
+        border:1px solid var(--stroke);
+        background:linear-gradient(180deg,var(--panel),var(--panel2));
+        box-shadow:var(--shadow);
+        overflow:hidden;
+      }
+      .cardHead{
+        padding:14px 14px 12px;
+        display:flex;align-items:center;justify-content:space-between;gap:12px;
+        border-bottom:1px solid var(--stroke);
+        font-weight:700;
+      }
+      .cardBody{padding:14px}
+
+      .btn{
+        border-radius:14px;padding:10px 12px;
+        border:1px solid var(--stroke);
+        background:rgba(10,12,14,.55);
+        color:var(--text);
+        cursor:pointer;
+        transition:transform 120ms ease,border-color 160ms ease,background 160ms ease,box-shadow 160ms ease;
+        user-select:none;
+      }
+      .btn:focus{outline:none;box-shadow:var(--focus)}
+      .btn.primary{
+        border-color:rgba(255,255,255,.10);
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+          radial-gradient(80% 120% at 50% 0%, var(--accent2), transparent 60%);
+      }
+      .btn.ghost{background:rgba(10,12,14,.35)}
+      .btn:active{transform:scale(.98)}
+
+      .tabBtn{
+        width:100%;text-align:left;padding:10px 12px;border-radius:14px;
+        border:1px solid rgba(255,255,255,.08);
+        background:rgba(10,12,14,.35);
+        color:var(--text);
+        cursor:pointer;
+        transition:border-color 160ms ease, background 160ms ease;
+      }
+      .tabBtn.active{
+        border-color:rgba(255,255,255,.18);
+        background:radial-gradient(120% 140% at 20% 0%, var(--accent2), rgba(255,255,255,.03) 55%);
+      }
+
+      .grid{display:grid;gap:14px}
+      .small{font-size:12px;color:var(--muted2)}
+      .muted{color:var(--muted)}
+      .h1{font-size:22px;font-weight:760;letter-spacing:.2px;margin:0}
+
+      .loginWrap{position:relative;z-index:1;height:100%;width:100%;display:grid;place-items:center;padding:18px}
+      .loginCard{width:min(560px,100%)}
+      .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+      .pill{
+        padding:6px 10px;border:1px solid var(--stroke);border-radius:999px;
+        background:rgba(10,12,14,.35);color:var(--muted);font-size:12px
+      }
+      .divider{height:1px;background:var(--stroke);margin:10px 0}
+    </style>
+  </head>
+
+  <body>
+    <div class="shell">
+      <div class="bg-molten"></div>
+      <div class="dust"></div>
+
+      <!-- LOGIN -->
+      <div id="loginView" class="loginWrap" style="display:none;">
+        <div class="card loginCard">
+          <div class="cardHead"><div>Discord Login</div></div>
+          <div class="cardBody">
+            <div class="grid" style="gap:10px;">
+              <div class="row">
+                <span class="pill">Website</span>
+                <span class="pill">OAuth2</span>
+                <span class="pill">Required</span>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="justify-content:space-between;">
+                <div>
+                  <div class="h1" style="font-size:18px;">Sign in to continue</div>
+                  <div class="small" style="margin-top:6px;">Login uses Discord OAuth2.</div>
+                </div>
+                <button id="btnLogin" class="btn primary">Login with Discord</button>
+              </div>
+              <div id="loginStatus" class="small"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- APP -->
+      <div id="appView" style="display:none; width:100%; height:100%; display:flex;">
+        <div class="left">
+          <div class="brand">
+            <div class="brandDot"></div>
+            <div>
+              <div class="brandTitle">MoltenHub</div>
+              <div class="brandSub">OLED Dashboard</div>
+            </div>
+          </div>
+
+          <div class="grid" style="gap:10px; padding:6px 4px 0 4px;">
+            <button class="tabBtn active" data-tab="home">Home</button>
+            <button class="tabBtn" data-tab="downloads">Downloads</button>
+            <button class="tabBtn" data-tab="settings">Settings</button>
+            <button class="tabBtn" data-tab="info">Info</button>
+          </div>
+
+          <div style="position:absolute; left:16px; right:16px; bottom:16px; display:grid; gap:10px;">
+            <button id="btnLogout" class="btn ghost">Logout</button>
+          </div>
+        </div>
+
+        <div class="main">
+          <div class="content">
+            <!-- HOME -->
+            <div class="grid tabPage" id="tab-home">
+              <div class="card">
+                <div class="cardHead">
+                  <div>Discord</div>
+                  <button class="btn primary" id="btnJoinDiscord">Join Discord</button>
+                </div>
+                <div class="cardBody">
+                  <div class="h1" style="font-size:18px;">MoltenHub Community</div>
+                  <div class="small" style="margin-top:10px;" id="whoami"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DOWNLOADS -->
+            <div class="grid tabPage" id="tab-downloads" style="display:none;">
+              <div class="card">
+                <div class="cardHead">
+                  <div>Downloads</div>
+                  <button class="btn ghost" id="btnReloadDownloads">Reload</button>
+                </div>
+                <div class="cardBody">
+                  <div id="downloadsList" class="grid" style="gap:12px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SETTINGS -->
+            <div class="grid tabPage" id="tab-settings" style="display:none;">
+              <div class="card">
+                <div class="cardHead"><div>Settings</div></div>
+                <div class="cardBody">
+                  <div class="grid" style="gap:10px;">
+                    <div class="small">Accent Preset</div>
+                    <div class="row">
+                      <button class="btn ghost" data-accent="molten_ice">Molten Ice</button>
+                      <button class="btn ghost" data-accent="molten_pearls">Molten Pearls</button>
+                    </div>
+                    <div style="height:14px;border-radius:999px;border:1px solid var(--stroke);
+                      background:linear-gradient(90deg, rgba(255,255,255,.05), var(--accent2), rgba(255,255,255,.04));"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- INFO -->
+            <div class="grid tabPage" id="tab-info" style="display:none;">
+              <div class="card">
+                <div class="cardHead"><div>Device Info</div></div>
+                <div class="cardBody">
+                  <div class="grid" style="gap:10px;">
+                    <div><div class="small">OS</div><div class="muted" id="osHint"></div></div>
+                    <div><div class="small">Platform</div><div class="muted" id="platform"></div></div>
+                    <div><div class="small">User Agent</div><div class="muted" id="ua" style="word-break:break-word;"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ----- CONFIG -----
+      // This is safe to be public (client_id is not secret).
+      // Put it here or set it as window.MOLTENHUB_CLIENT_ID via another script.
+      const DISCORD_CLIENT_ID = "1463281825085522132";
+      const DISCORD_INVITE = "https://discord.gg/JgfU7YGrmk";
+
+      // Redirect URL must match your Discord Developer Portal entry exactly.
+      // We compute it from current origin.
+      const REDIRECT_URI = `${location.origin}/callback`;
+
+      // ----- STORAGE -----
+      const KEY_TOKEN = "moltenhub.discord.token.v1";
+      const KEY_ACCENT = "moltenhub.accent.v1";
+      const KEY_STATE = "moltenhub.oauth.state.v1";
+
+      // ----- THEME -----
+      function setAccent(preset) {
+        if (preset === "molten_pearls") {
+          document.documentElement.style.setProperty("--accent", "#d9b6ff");
+          document.documentElement.style.setProperty("--accent2", "rgba(217, 182, 255, 0.18)");
+          document.documentElement.style.setProperty("--focus", "0 0 0 3px rgba(217, 182, 255, 0.28)");
+        } else {
+          document.documentElement.style.setProperty("--accent", "#73c7ff");
+          document.documentElement.style.setProperty("--accent2", "rgba(115, 199, 255, 0.18)");
+          document.documentElement.style.setProperty("--focus", "0 0 0 3px rgba(115, 199, 255, 0.28)");
+        }
+        localStorage.setItem(KEY_ACCENT, preset);
+      }
+      setAccent(localStorage.getItem(KEY_ACCENT) || "molten_ice");
+
+      // ----- UI -----
+      const loginView = document.getElementById("loginView");
+      const appView = document.getElementById("appView");
+      const loginStatus = document.getElementById("loginStatus");
+
+      function showLogin(msg = "") {
+        loginView.style.display = "";
+        appView.style.display = "none";
+        loginStatus.textContent = msg;
+      }
+      function showApp() {
+        loginView.style.display = "none";
+        appView.style.display = "flex";
+      }
+
+      function setActiveTab(tab) {
+        document.querySelectorAll(".tabBtn").forEach((b) => b.classList.remove("active"));
+        document.querySelectorAll(".tabPage").forEach((p) => (p.style.display = "none"));
+        const btn = document.querySelector(`.tabBtn[data-tab="${tab}"]`);
+        const page = document.getElementById(`tab-${tab}`);
+        if (btn) btn.classList.add("active");
+        if (page) page.style.display = "";
+        if (tab === "downloads") loadDownloads();
+      }
+
+      // ----- OAUTH START -----
+      function randomString(len = 28) {
+        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const rnd = crypto.getRandomValues(new Uint8Array(len));
+        let out = "";
+        for (let i = 0; i < len; i++) out += chars[rnd[i] % chars.length];
+        return out;
+      }
+
+      function startDiscordLogin() {
+        const state = randomString(28);
+        sessionStorage.setItem(KEY_STATE, state);
+
+        const params = new URLSearchParams({
+          client_id: DISCORD_CLIENT_ID,
+          redirect_uri: REDIRECT_URI,
+          response_type: "code",
+          scope: "identify",
+          state
+        });
+
+        const url = `https://discord.com/api/oauth2/authorize?${params.toString()}`;
+        window.location.href = url;
+      }
+
+      // ----- API HELPERS -----
+      async function exchangeCodeForTokenViaServer(code) {
+        const res = await fetch("/api/discord-token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, redirect_uri: REDIRECT_URI })
+        });
+        if (!res.ok) throw new Error("token_exchange_failed");
+        return await res.json();
+      }
+
+      async function getIdentity(accessToken) {
+        const res = await fetch("https://discord.com/api/users/@me", {
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        if (!res.ok) throw new Error("identity_failed");
+        return await res.json();
+      }
+
+      // ----- DOWNLOADS -----
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        }[c]));
+      }
+      function mbFromBytes(bytes) {
+        const mb = Number(bytes || 0) / (1024 * 1024);
+        return `${mb.toFixed(2)} MB`;
+      }
+
+      async function loadDownloads() {
+        const list = document.getElementById("downloadsList");
+        list.innerHTML = "";
+        try {
+          const res = await fetch("./downloads.json", { cache: "no-store" });
+          if (!res.ok) throw new Error("bad");
+          const data = await res.json();
+          const items = Array.isArray(data.items) ? data.items : [];
+          for (const it of items) {
+            const row = document.createElement("div");
+            row.style.borderRadius = "18px";
+            row.style.border = "1px solid var(--stroke)";
+            row.style.background = "rgba(10,12,14,0.35)";
+            row.style.padding = "14px";
+            row.style.display = "grid";
+            row.style.gap = "10px";
+
+            row.innerHTML = `
+              <div style="display:flex; gap:12px; align-items:start; justify-content:space-between;">
+                <div style="min-width:0;">
+                  <div style="font-weight:750; letter-spacing:0.15">${escapeHtml(it.name || "")}</div>
+                  <div class="small" style="margin-top:4px;">${escapeHtml(it.description || "")}</div>
+                </div>
+                <button class="btn primary">Download</button>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;">
+                <div class="small"><div style="color:var(--muted2)">Minecraft Version</div><div style="color:var(--muted)">${escapeHtml(it.minecraftVersion || "")}</div></div>
+                <div class="small"><div style="color:var(--muted2)">Fabric Required</div><div style="color:var(--muted)">${it.fabricRequired ? "Yes" : "No"}</div></div>
+                <div class="small"><div style="color:var(--muted2)">File Name</div><div style="color:var(--muted)">${escapeHtml(it.fileName || "")}</div></div>
+                <div class="small"><div style="color:var(--muted2)">Size</div><div style="color:var(--muted)">${mbFromBytes(it.fileSizeBytes)}</div></div>
+              </div>
+            `;
+
+            row.querySelector("button").addEventListener("click", () => {
+              if (it.downloadUrl) window.open(String(it.downloadUrl).trim(), "_blank");
+            });
+
+            list.appendChild(row);
+          }
+        } catch {
+          // no extra text
+        }
+      }
+
+      // ----- INFO -----
+      function detectWindowsHint(ua) {
+        const low = (ua || "").toLowerCase();
+        if (!low.includes("windows")) return "Unknown";
+        if ((ua || "").includes("Windows NT 10.0")) return "Windows 10/11 (NT 10.0)";
+        return "Windows (version unknown)";
+      }
+
+      // ----- BOOT -----
+      async function bootstrap() {
+        // wire tabs
+        document.querySelectorAll(".tabBtn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const tab = btn.getAttribute("data-tab");
+            if (tab) setActiveTab(tab);
+          });
+        });
+
+        // buttons
+        document.getElementById("btnLogin").addEventListener("click", startDiscordLogin);
+        document.getElementById("btnJoinDiscord").addEventListener("click", () => window.open(DISCORD_INVITE, "_blank"));
+        document.getElementById("btnReloadDownloads").addEventListener("click", loadDownloads);
+        document.getElementById("btnLogout").addEventListener("click", () => {
+          localStorage.removeItem(KEY_TOKEN);
+          sessionStorage.removeItem(KEY_STATE);
+          showLogin("");
+        });
+
+        document.querySelectorAll("[data-accent]").forEach((b) => {
+          b.addEventListener("click", () => setAccent(b.getAttribute("data-accent")));
+        });
+
+        // info
+        document.getElementById("platform").textContent = navigator.platform || "Unknown";
+        document.getElementById("ua").textContent = navigator.userAgent || "Unknown";
+        document.getElementById("osHint").textContent = detectWindowsHint(navigator.userAgent || "");
+
+        // already logged in?
+        const tokenRaw = localStorage.getItem(KEY_TOKEN);
+        if (tokenRaw) {
+          try {
+            const token = JSON.parse(tokenRaw);
+            const me = await getIdentity(token.access_token);
+            document.getElementById("whoami").textContent = `${me.username}#${me.discriminator ?? "0"}`;
+            showApp();
+            return;
+          } catch {
+            localStorage.removeItem(KEY_TOKEN);
+          }
+        }
+
+        showLogin("");
+      }
+
+      bootstrap();
+    </script>
+  </body>
+</html>

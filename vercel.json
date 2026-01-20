@@ -1,0 +1,7 @@
+{
+  "routes": [
+    { "src": "/callback", "dest": "/callback.html" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
