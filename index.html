@@ -19,7 +19,6 @@
         --focus:0 0 0 3px rgba(115,199,255,.28);
         color-scheme: dark;
       }
-
       *{box-sizing:border-box}
       html,body{
         height:100%; margin:0; overflow:hidden;
@@ -59,12 +58,7 @@
       }
       @keyframes dustmove{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-60px,-45px,0)}}
 
-      /* Rain canvas overlay */
-      .rainLayer{
-        position:absolute; inset:0;
-        pointer-events:none;
-        z-index:3;
-      }
+      .rainLayer{position:absolute; inset:0; pointer-events:none; z-index:3;}
       .rainLayer.off{display:none}
 
       .left{
@@ -120,7 +114,6 @@
       .btn.big{padding:14px 16px; border-radius:18px; font-weight:800;}
       .btn:active{transform:scale(.98)}
 
-      /* Bigger tabs */
       .tabBtn{
         width:100%;
         text-align:left;
@@ -154,89 +147,34 @@
       }
       .divider{height:1px;background:var(--stroke);margin:10px 0}
 
-      .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
-
-      .discordRow{
-        display:flex;
-        align-items:center;
-        gap:12px;
-        min-width:0;
-      }
-      .guildIcon{
-        width:44px;height:44px;border-radius:14px;
-        border:1px solid rgba(255,255,255,.10);
-        background:rgba(10,12,14,.35);
-        overflow:hidden;
-        flex:0 0 auto;
-        display:grid;place-items:center;
-      }
-      .guildIcon img{width:100%;height:100%;object-fit:cover;display:block}
-      .titleLine{
-        font-weight:850;
-        letter-spacing:.2px;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-      }
-      .subLine{
-        font-size:12px;color:var(--muted2);
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-      }
-      .grow{min-width:0; flex:1}
-
-      details.ownerTools summary{
-        cursor:pointer;
-        user-select:none;
-        color:var(--muted);
-        font-size:12px;
-      }
-      .textarea{
-        width:100%;
-        min-height:170px;
-        padding:12px;
-        border-radius:16px;
-        border:1px solid var(--stroke);
-        background:rgba(10,12,14,.35);
-        color:var(--text);
-        outline:none;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        font-size:12px;
-      }
-      .textarea:focus{box-shadow:var(--focus)}
-      .select{
-        padding:10px 12px;
+      /* small JS error banner */
+      #jsError{
+        position:fixed; z-index:99999; top:12px; left:12px;
+        max-width:min(520px, calc(100vw - 24px));
+        display:none;
+        border:1px solid rgba(255,255,255,.14);
         border-radius:14px;
-        border:1px solid var(--stroke);
-        background:rgba(10,12,14,.35);
-        color:var(--text);
-        outline:none;
-      }
-      .select:focus{box-shadow:var(--focus)}
-      .switchRow{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        gap:12px;
+        background:rgba(10,12,14,.82);
+        backdrop-filter: blur(10px);
         padding:10px 12px;
-        border-radius:16px;
-        border:1px solid var(--stroke);
-        background:rgba(10,12,14,.25);
+        box-shadow: 0 16px 50px rgba(0,0,0,.55);
+        font-size:12px;
+        white-space:pre-wrap;
       }
-      .range{width:100%;}
+      #jsError b{font-weight:900}
     </style>
   </head>
 
   <body>
+    <div id="jsError"><b>JS error:</b> </div>
+
     <div class="shell">
       <div class="bg-molten"></div>
       <div class="dust"></div>
-
       <canvas id="rainCanvas" class="rainLayer"></canvas>
 
-      <!-- LOGIN -->
-      <div id="loginView" class="loginWrap" style="display:none;">
+      <!-- LOGIN (FIXED: visible by default, no display:none) -->
+      <div id="loginView" class="loginWrap">
         <div class="card loginCard">
           <div class="cardHead"><div>Discord Login</div></div>
           <div class="cardBody">
@@ -285,270 +223,34 @@
 
         <div class="main">
           <div class="content">
-            <!-- HOME -->
-            <div class="grid tabPage" id="tab-home">
-              <div class="card">
-                <div class="cardHead">
-                  <div>Discord</div>
-                  <div class="row">
-                    <button class="btn ghost big" id="btnCopyDiscord">Copy Discord link</button>
-                    <button class="btn primary big" id="btnJoinDiscord">Join Discord</button>
-                  </div>
-                </div>
-                <div class="cardBody">
-                  <div class="grid" style="gap:12px;">
-                    <div class="discordRow">
-                      <div class="guildIcon" id="guildIcon"></div>
-                      <div class="grow">
-                        <div class="titleLine" id="guildName">MoltenHub Community</div>
-                        <div class="subLine" id="guildMeta">Loading server info…</div>
-                      </div>
-                    </div>
-
-                    <div class="divider"></div>
-
-                    <div>
-                      <div class="small">Signed in as</div>
-                      <div class="muted" id="whoami"></div>
-                    </div>
-
-                    <div>
-                      <div class="small">Local time</div>
-                      <div class="muted" id="clockLine"></div>
-                      <div class="small" id="dateLine"></div>
-                    </div>
-
-                    <div class="small" id="homeStatus"></div>
-                  </div>
-                </div>
+            <div class="card">
+              <div class="cardHead"><div>Home</div></div>
+              <div class="cardBody">
+                <div class="small">App loaded.</div>
               </div>
             </div>
-
-            <!-- DOWNLOADS -->
-            <div class="grid tabPage" id="tab-downloads" style="display:none;">
-              <div class="card">
-                <div class="cardHead">
-                  <div>Downloads</div>
-                  <button class="btn ghost" id="btnReloadDownloads">Reload</button>
-                </div>
-                <div class="cardBody">
-                  <div id="downloadsList" class="grid" style="gap:12px;"></div>
-
-                  <div style="height:12px"></div>
-
-                  <details class="ownerTools">
-                    <summary>Owner Tools (paste downloads JSON here to update locally)</summary>
-                    <div style="height:10px"></div>
-
-                    <div class="small">Paste JSON as { "items": [ ... ] } — this only affects your browser (no redeploy).</div>
-                    <div style="height:10px"></div>
-
-                    <textarea id="ownerDownloadsJson" class="textarea" spellcheck="false"></textarea>
-
-                    <div style="height:10px"></div>
-                    <div class="row" style="justify-content:space-between;">
-                      <div class="row">
-                        <button class="btn primary" id="btnApplyOwnerDownloads">Apply</button>
-                        <button class="btn ghost" id="btnClearOwnerDownloads">Clear Override</button>
-                      </div>
-                      <div class="row">
-                        <button class="btn ghost" id="btnCopyOwnerDownloads">Copy JSON</button>
-                        <button class="btn ghost" id="btnDownloadOwnerJson">Download downloads.json</button>
-                      </div>
-                    </div>
-
-                    <div class="small" id="ownerDownloadsStatus" style="margin-top:10px;"></div>
-                  </details>
-                </div>
-              </div>
-            </div>
-
-            <!-- SETTINGS -->
-            <div class="grid tabPage" id="tab-settings" style="display:none;">
-              <div class="card">
-                <div class="cardHead">
-                  <div>Settings</div>
-                  <div class="row" style="gap:8px; align-items:center;">
-                    <div class="small" style="opacity:.8;">Colour</div>
-                    <select id="colorMode" class="select" aria-label="Colour mode">
-                      <option value="presets">Presets</option>
-                      <option value="picker">Colour picker</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="cardBody">
-                  <div class="grid" style="gap:14px;">
-                    <!-- Presets -->
-                    <div id="colorPresetsWrap">
-                      <div class="small">Presets</div>
-                      <div class="row" id="presetRow" style="margin-top:10px;"></div>
-                    </div>
-
-                    <!-- Picker -->
-                    <div id="colorPickerWrap" style="display:none;">
-                      <div class="small">Accent colour</div>
-                      <div class="row" style="margin-top:10px;">
-                        <input id="accentPicker" type="color" value="#73c7ff" style="width:64px;height:44px;border-radius:14px;border:1px solid var(--stroke);background:rgba(10,12,14,.35);padding:6px" />
-                        <button class="btn ghost" id="btnUsePicker">Use this colour</button>
-                        <div class="small mono" id="pickerHex"></div>
-                      </div>
-                      <div class="small" style="margin-top:8px;">This updates the accent + rain colour (if “follow accent” is enabled).</div>
-                    </div>
-
-                    <div class="divider"></div>
-
-                    <!-- Rain controls -->
-                    <div class="small">Rain overlay</div>
-
-                    <div class="switchRow">
-                      <div>
-                        <div style="font-weight:800">Rain</div>
-                        <div class="small">Overlay water/rain effect</div>
-                      </div>
-                      <button class="btn ghost" id="btnRainToggle">On</button>
-                    </div>
-
-                    <div class="switchRow">
-                      <div class="grow">
-                        <div style="font-weight:800">Speed</div>
-                        <div class="small">How fast the rain falls</div>
-                        <input id="rainSpeed" class="range" type="range" min="0.2" max="2.5" step="0.05" value="1" />
-                      </div>
-                      <div class="pill" id="rainSpeedVal">1.00×</div>
-                    </div>
-
-                    <div class="switchRow">
-                      <div>
-                        <div style="font-weight:800">Sound</div>
-                        <div class="small">Soft rain noise</div>
-                      </div>
-                      <button class="btn ghost" id="btnRainSoundToggle">Off</button>
-                    </div>
-
-                    <div class="switchRow">
-                      <div class="grow">
-                        <div style="font-weight:800">Volume</div>
-                        <div class="small">Rain sound volume</div>
-                        <input id="rainVolume" class="range" type="range" min="0" max="1" step="0.01" value="0.25" />
-                      </div>
-                      <div class="pill" id="rainVolVal">25%</div>
-                    </div>
-
-                    <div class="switchRow">
-                      <div class="grow">
-                        <div style="font-weight:800">Rain colour</div>
-                        <div class="small">Follow accent or choose custom</div>
-                        <select id="rainColorMode" class="select" style="width:100%; margin-top:8px;">
-                          <option value="accent">Follow accent</option>
-                          <option value="custom">Custom</option>
-                        </select>
-                        <div class="row" id="rainCustomRow" style="display:none; margin-top:10px;">
-                          <input id="rainColorPicker" type="color" value="#73c7ff" style="width:64px;height:44px;border-radius:14px;border:1px solid var(--stroke);background:rgba(10,12,14,.35);padding:6px" />
-                          <div class="small mono" id="rainHex"></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="small" style="opacity:.8;">
-                      Tip: if sound doesn’t start, click once anywhere (browser audio policy).
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- INFO (no OS/platform/user-agent) -->
-            <div class="grid tabPage" id="tab-info" style="display:none;">
-              <div class="card">
-                <div class="cardHead"><div>Info</div></div>
-                <div class="cardBody">
-                  <div class="grid" style="gap:12px;">
-                    <div>
-                      <div class="small">Time</div>
-                      <div class="muted" id="clockLine2"></div>
-                      <div class="small" id="dateLine2"></div>
-                    </div>
-                    <div class="divider"></div>
-                    <div>
-                      <div class="small">Origin</div>
-                      <div class="small mono" id="originLine"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>
+
     </div>
 
     <script>
-      // ----- CONFIG -----
-      const DISCORD_CLIENT_ID = "1463281825085522132";
-      const DISCORD_INVITE_URL = "https://discord.gg/JgfU7YGrmk";
-      const DISCORD_INVITE_CODE = "JgfU7YGrmk";
-      const REDIRECT_URI = `${location.origin}/callback`;
+      const jsError = document.getElementById("jsError");
+      window.addEventListener("error", (e) => {
+        jsError.style.display = "block";
+        jsError.textContent = `JS error: ${e.message}\n${e.filename || ""}:${e.lineno || ""}`;
+      });
+      window.addEventListener("unhandledrejection", (e) => {
+        jsError.style.display = "block";
+        jsError.textContent = `JS promise error: ${String(e.reason && e.reason.message ? e.reason.message : e.reason)}`;
+      });
 
-      // ----- STORAGE -----
-      const KEY_TOKEN = "moltenhub.discord.token.v1";
-      const KEY_STATE = "moltenhub.oauth.state.v1";
-      const KEY_ACCENT = "moltenhub.accent.v1";
-      const KEY_DOWNLOADS_OVERRIDE = "moltenhub.downloads.override.v1";
-      const KEY_COLOR_MODE = "moltenhub.color.mode.v1";
-      const KEY_RAIN_ENABLED = "moltenhub.rain.enabled.v1";
-      const KEY_RAIN_SPEED = "moltenhub.rain.speed.v1";
-      const KEY_RAIN_SOUND = "moltenhub.rain.sound.v1";
-      const KEY_RAIN_VOLUME = "moltenhub.rain.volume.v1";
-      const KEY_RAIN_COLOR_MODE = "moltenhub.rain.color.mode.v1";
-      const KEY_RAIN_COLOR = "moltenhub.rain.color.v1";
-
-      // ----- PRESETS (add as many as you want here) -----
-      const PRESETS = [
-        { id: "molten_ice",    name: "Molten Ice",    accent: "#73c7ff" },
-        { id: "molten_pearls", name: "Molten Pearls", accent: "#d9b6ff" },
-        { id: "molten_ember",  name: "Molten Ember",  accent: "#ff7c5a" },
-        { id: "molten_ocean",  name: "Molten Ocean",  accent: "#56f0ff" },
-        { id: "molten_rose",   name: "Molten Rose",   accent: "#ff6fb5" },
-        { id: "molten_lime",   name: "Molten Lime",   accent: "#7dff8a" },
-        { id: "molten_gold",   name: "Molten Gold",   accent: "#ffd26a" },
-        { id: "molten_violet", name: "Molten Violet", accent: "#a78bfa" },
-        { id: "molten_slate",  name: "Molten Slate",  accent: "#9fb2c8" },
-        { id: "molten_aurora", name: "Molten Aurora", accent: "#7cf7c9" },
-        { id: "molten_sunset", name: "Molten Sunset", accent: "#ff9b6a" },
-        { id: "molten_mint",   name: "Molten Mint",   accent: "#6bffde" },
-        { id: "molten_crimson",name: "Molten Crimson",accent: "#ff3b6b" },
-        { id: "molten_neon",   name: "Molten Neon",   accent: "#7cff4a" },
-        { id: "molten_iceberg",name: "Molten Iceberg",accent: "#9ad7ff" },
-        { id: "molten_plasma", name: "Molten Plasma", accent: "#c77dff" }
-      ];
-
-      function hexToRgb(hex){
-        const h = String(hex || "").replace("#","").trim();
-        if (h.length !== 6) return { r:115, g:199, b:255 };
-        return { r:parseInt(h.slice(0,2),16), g:parseInt(h.slice(2,4),16), b:parseInt(h.slice(4,6),16) };
-      }
-      function rgba(hex,a){ const {r,g,b} = hexToRgb(hex); return `rgba(${r}, ${g}, ${b}, ${a})`; }
-
-      function setAccentHex(hex){
-        const accent = hex || "#73c7ff";
-        document.documentElement.style.setProperty("--accent", accent);
-        document.documentElement.style.setProperty("--accent2", rgba(accent, 0.18));
-        document.documentElement.style.setProperty("--focus", `0 0 0 3px ${rgba(accent, 0.28)}`);
-        localStorage.setItem(KEY_ACCENT, accent);
-
-        if ((localStorage.getItem(KEY_RAIN_COLOR_MODE) || "accent") === "accent") {
-          setRainColor(accent);
-        }
-      }
-      setAccentHex(localStorage.getItem(KEY_ACCENT) || "#73c7ff");
-
-      // ----- UI -----
+      // If you paste the full “everything” JS back in, keep this pattern:
+      // showLogin() / showApp() should always run.
       const loginView = document.getElementById("loginView");
       const appView = document.getElementById("appView");
       const loginStatus = document.getElementById("loginStatus");
-      const homeStatus = document.getElementById("homeStatus");
 
       function showLogin(msg=""){
         loginView.style.display = "";
@@ -560,515 +262,14 @@
         appView.style.display = "flex";
       }
 
-      function setActiveTab(tab){
-        document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tabPage").forEach(p => p.style.display = "none");
-
-        const btn = document.querySelector(`.tabBtn[data-tab="${tab}"]`);
-        const page = document.getElementById(`tab-${tab}`);
-
-        if (btn) btn.classList.add("active");
-        if (page) page.style.display = "";
-
-        if (tab === "downloads") loadDownloads();
-      }
-
-      // ----- UTIL -----
-      async function copyToClipboard(text){
-        try { await navigator.clipboard.writeText(String(text)); return true; }
-        catch {
-          try {
-            const ta=document.createElement("textarea");
-            ta.value=String(text); ta.style.position="fixed"; ta.style.opacity="0";
-            document.body.appendChild(ta); ta.select();
-            document.execCommand("copy");
-            document.body.removeChild(ta);
-            return true;
-          } catch { return false; }
-        }
-      }
-
-      function downloadTextFile(filename, text){
-        const blob = new Blob([text], { type: "application/json;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
-
-      // ----- OAUTH START -----
-      function randomString(len=28){
-        const chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        const rnd=crypto.getRandomValues(new Uint8Array(len));
-        let out="";
-        for(let i=0;i<len;i++) out+=chars[rnd[i]%chars.length];
-        return out;
-      }
-
-      function startDiscordLogin(){
-        const state = randomString(28);
-        sessionStorage.setItem(KEY_STATE, state);
-
-        const params = new URLSearchParams({
-          client_id: DISCORD_CLIENT_ID,
-          redirect_uri: REDIRECT_URI,
-          response_type: "code",
-          scope: "identify",
-          state
-        });
-
-        location.href = `https://discord.com/api/oauth2/authorize?${params.toString()}`;
-      }
-
-      async function getIdentity(accessToken){
-        const res = await fetch("https://discord.com/api/users/@me", {
-          headers: { Authorization: `Bearer ${accessToken}` }
-        });
-        if (!res.ok) throw new Error("identity_failed");
-        return await res.json();
-      }
-
-      // ----- DISCORD SERVER INFO -----
-      async function loadGuildInfo(){
-        const nameEl = document.getElementById("guildName");
-        const metaEl = document.getElementById("guildMeta");
-        const iconWrap = document.getElementById("guildIcon");
-
-        iconWrap.innerHTML = "";
-        metaEl.textContent = "Loading server info…";
-
-        try {
-          const res = await fetch(`/api/discord-invite?invite=${encodeURIComponent(DISCORD_INVITE_CODE)}`, { cache:"no-store" });
-          if (!res.ok) throw new Error("invite_fetch_failed");
-          const data = await res.json();
-
-          if (!data.guild) { metaEl.textContent="Server info unavailable."; return; }
-          nameEl.textContent = data.guild.name || "Discord Server";
-
-          const parts = [];
-          if (typeof data.guild.approximate_member_count === "number") parts.push(`${data.guild.approximate_member_count.toLocaleString()} members`);
-          if (typeof data.guild.approximate_presence_count === "number") parts.push(`${data.guild.approximate_presence_count.toLocaleString()} online`);
-          metaEl.textContent = parts.length ? parts.join(" • ") : " ";
-
-          if (data.guild.icon_url) {
-            const img = document.createElement("img");
-            img.alt = "Server icon";
-            img.src = data.guild.icon_url;
-            iconWrap.appendChild(img);
-          }
-        } catch {
-          metaEl.textContent = "Couldn’t load server info.";
-        }
-      }
-
-      // ----- DOWNLOADS (with owner override) -----
-      function escapeHtml(s){
-        return String(s).replace(/[&<>"']/g, c => ({
-          "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-        }[c]));
-      }
-      function mbFromBytes(bytes){
-        const mb = Number(bytes||0)/(1024*1024);
-        return `${mb.toFixed(2)} MB`;
-      }
-      function getDownloadsOverride(){
-        const raw = localStorage.getItem(KEY_DOWNLOADS_OVERRIDE);
-        if (!raw) return null;
-        try { return JSON.parse(raw); } catch { return null; }
-      }
-
-      async function loadDownloads(){
-        const list = document.getElementById("downloadsList");
-        list.innerHTML = "";
-
-        let data = getDownloadsOverride();
-        if (!data) {
-          try {
-            const res = await fetch("./downloads.json", { cache:"no-store" });
-            if (!res.ok) throw new Error("bad");
-            data = await res.json();
-          } catch {
-            data = { items: [] };
-          }
-        }
-
-        const items = Array.isArray(data.items) ? data.items : [];
-        for (const it of items) {
-          const row = document.createElement("div");
-          row.style.borderRadius="18px";
-          row.style.border="1px solid var(--stroke)";
-          row.style.background="rgba(10,12,14,0.35)";
-          row.style.padding="14px";
-          row.style.display="grid";
-          row.style.gap="10px";
-
-          row.innerHTML = `
-            <div style="display:flex; gap:12px; align-items:start; justify-content:space-between;">
-              <div style="min-width:0;">
-                <div style="font-weight:850; letter-spacing:0.15">${escapeHtml(it.name||"")}</div>
-                <div class="small" style="margin-top:4px;">${escapeHtml(it.description||"")}</div>
-              </div>
-              <button class="btn primary big">Download</button>
-            </div>
-            <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;">
-              <div class="small"><div style="color:var(--muted2)">Minecraft Version</div><div style="color:var(--muted)">${escapeHtml(it.minecraftVersion||"")}</div></div>
-              <div class="small"><div style="color:var(--muted2)">Fabric Required</div><div style="color:var(--muted)">${it.fabricRequired ? "Yes" : "No"}</div></div>
-              <div class="small"><div style="color:var(--muted2)">File Name</div><div style="color:var(--muted)">${escapeHtml(it.fileName||"")}</div></div>
-              <div class="small"><div style="color:var(--muted2)">Size</div><div style="color:var(--muted)">${mbFromBytes(it.fileSizeBytes)}</div></div>
-            </div>
-          `;
-
-          row.querySelector("button").addEventListener("click", () => {
-            if (it.downloadUrl) window.open(String(it.downloadUrl).trim(), "_blank");
-          });
-
-          list.appendChild(row);
-        }
-
-        const ta = document.getElementById("ownerDownloadsJson");
-        if (ta) ta.value = JSON.stringify({ items }, null, 2);
-      }
-
-      function initOwnerDownloadsTools(){
-        const ta = document.getElementById("ownerDownloadsJson");
-        const status = document.getElementById("ownerDownloadsStatus");
-
-        document.getElementById("btnApplyOwnerDownloads").addEventListener("click", () => {
-          try {
-            const parsed = JSON.parse(ta.value || "");
-            if (!parsed || !Array.isArray(parsed.items)) {
-              status.textContent = "JSON must include { items: [ ... ] }";
-              return;
-            }
-            localStorage.setItem(KEY_DOWNLOADS_OVERRIDE, JSON.stringify({ items: parsed.items }, null, 2));
-            status.textContent = "Applied override (this browser only).";
-            loadDownloads();
-          } catch {
-            status.textContent = "Invalid JSON.";
-          }
-        });
-
-        document.getElementById("btnClearOwnerDownloads").addEventListener("click", () => {
-          localStorage.removeItem(KEY_DOWNLOADS_OVERRIDE);
-          status.textContent = "Override cleared.";
-          loadDownloads();
-        });
-
-        document.getElementById("btnCopyOwnerDownloads").addEventListener("click", async () => {
-          const ok = await copyToClipboard(ta.value || "");
-          status.textContent = ok ? "Copied JSON." : "Copy failed.";
-        });
-
-        document.getElementById("btnDownloadOwnerJson").addEventListener("click", () => {
-          const json = ta.value || JSON.stringify({ items: [] }, null, 2);
-          downloadTextFile("downloads.json", json);
-          status.textContent = "Downloaded downloads.json";
-        });
-      }
-
-      // ----- CLOCK / DATE -----
-      function pad2(n){ return String(n).padStart(2,"0"); }
-      function updateClock(){
-        const now = new Date();
-        const t = `${pad2(now.getHours())}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}`;
-        const d = now.toLocaleDateString(undefined, { weekday:"long", year:"numeric", month:"long", day:"numeric" });
-
-        document.getElementById("clockLine").textContent = t;
-        document.getElementById("dateLine").textContent = d;
-        document.getElementById("clockLine2").textContent = t;
-        document.getElementById("dateLine2").textContent = d;
-      }
-
-      // ----- COLOUR SETTINGS -----
-      function initColorSettings(){
-        const modeSel = document.getElementById("colorMode");
-        const presetsWrap = document.getElementById("colorPresetsWrap");
-        const pickerWrap = document.getElementById("colorPickerWrap");
-        const picker = document.getElementById("accentPicker");
-        const pickerHex = document.getElementById("pickerHex");
-        const btnUsePicker = document.getElementById("btnUsePicker");
-        const presetRow = document.getElementById("presetRow");
-
-        presetRow.innerHTML = "";
-        for (const p of PRESETS) {
-          const b = document.createElement("button");
-          b.className = "btn ghost";
-          b.textContent = p.name;
-          b.addEventListener("click", () => {
-            setAccentHex(p.accent);
-            homeStatus.textContent = `Theme: ${p.name}`;
-          });
-          presetRow.appendChild(b);
-        }
-
-        const saved = localStorage.getItem(KEY_COLOR_MODE) || "presets";
-        modeSel.value = saved;
-
-        function applyMode(){
-          const v = modeSel.value;
-          localStorage.setItem(KEY_COLOR_MODE, v);
-          presetsWrap.style.display = v === "presets" ? "" : "none";
-          pickerWrap.style.display = v === "picker" ? "" : "none";
-        }
-        modeSel.addEventListener("change", applyMode);
-        applyMode();
-
-        picker.value = localStorage.getItem(KEY_ACCENT) || "#73c7ff";
-        pickerHex.textContent = picker.value.toUpperCase();
-        picker.addEventListener("input", () => pickerHex.textContent = picker.value.toUpperCase());
-        btnUsePicker.addEventListener("click", () => {
-          setAccentHex(picker.value);
-          homeStatus.textContent = "Theme updated from colour picker.";
-        });
-      }
-
-      // ----- RAIN ENGINE + SOUND -----
-      const rain = {
-        enabled: (localStorage.getItem(KEY_RAIN_ENABLED) ?? "1") === "1",
-        speed: Number(localStorage.getItem(KEY_RAIN_SPEED) || "1"),
-        sound: (localStorage.getItem(KEY_RAIN_SOUND) ?? "0") === "1",
-        volume: Number(localStorage.getItem(KEY_RAIN_VOLUME) || "0.25"),
-        colorMode: localStorage.getItem(KEY_RAIN_COLOR_MODE) || "accent",
-        color: localStorage.getItem(KEY_RAIN_COLOR) || (localStorage.getItem(KEY_ACCENT) || "#73c7ff")
-      };
-
-      const rainCanvas = document.getElementById("rainCanvas");
-      const rctx = rainCanvas.getContext("2d", { alpha:true });
-
-      let drops = [];
-      let raf = 0;
-      let lastT = 0;
-
-      function setRainEnabled(on){
-        rain.enabled = !!on;
-        localStorage.setItem(KEY_RAIN_ENABLED, rain.enabled ? "1" : "0");
-        rainCanvas.classList.toggle("off", !rain.enabled);
-        if (rain.enabled) startRainLoop();
-      }
-      function setRainSpeed(val){
-        rain.speed = Math.max(0.2, Math.min(2.5, Number(val) || 1));
-        localStorage.setItem(KEY_RAIN_SPEED, String(rain.speed));
-      }
-      function setRainColor(hex){
-        rain.color = hex || "#73c7ff";
-        localStorage.setItem(KEY_RAIN_COLOR, rain.color);
-      }
-
-      function resizeRain(){
-        const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-        rainCanvas.width = Math.floor(window.innerWidth * dpr);
-        rainCanvas.height = Math.floor(window.innerHeight * dpr);
-        rainCanvas.style.width = window.innerWidth + "px";
-        rainCanvas.style.height = window.innerHeight + "px";
-        rctx.setTransform(dpr,0,0,dpr,0,0);
-
-        const count = Math.floor((window.innerWidth * window.innerHeight) / 18000);
-        drops = Array.from({ length: Math.max(80, Math.min(340, count)) }, () => makeDrop(true));
-      }
-      function makeDrop(randomY=false){
-        const w = window.innerWidth, h = window.innerHeight;
-        return {
-          x: Math.random()*w,
-          y: randomY ? Math.random()*h : -Math.random()*200,
-          len: 10 + Math.random()*22,
-          vx: -20 + Math.random()*40,
-          vy: 320 + Math.random()*560,
-          a: 0.08 + Math.random()*0.18,
-          thick: 1 + Math.random()*1.5
-        };
-      }
-
-      function startRainLoop(){
-        cancelAnimationFrame(raf);
-        lastT = performance.now();
-        raf = requestAnimationFrame(tickRain);
-      }
-
-      function tickRain(t){
-        raf = requestAnimationFrame(tickRain);
-        if (!rain.enabled) return;
-
-        const dt = Math.min(0.05, (t - lastT) / 1000);
-        lastT = t;
-
-        rctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-
-        const col = (rain.colorMode === "accent")
-          ? (localStorage.getItem(KEY_ACCENT) || rain.color)
-          : rain.color;
-
-        for (const d of drops) {
-          d.x += d.vx * dt * rain.speed;
-          d.y += d.vy * dt * rain.speed;
-
-          if (d.y > window.innerHeight + 40 || d.x < -40 || d.x > window.innerWidth + 40) {
-            Object.assign(d, makeDrop(false));
-          }
-
-          rctx.beginPath();
-          rctx.strokeStyle = rgba(col, d.a);
-          rctx.lineWidth = d.thick;
-          rctx.lineCap = "round";
-          rctx.moveTo(d.x, d.y);
-          rctx.lineTo(d.x + d.vx * 0.03, d.y + d.len);
-          rctx.stroke();
-        }
-      }
-
-      // Sound (soft noise)
-      let audioCtx=null, noiseNode=null, gainNode=null, filterNode=null;
-      function ensureAudio(){
-        if (audioCtx) return;
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        const bufferSize = 2 * audioCtx.sampleRate;
-        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const out = noiseBuffer.getChannelData(0);
-        for (let i=0;i<bufferSize;i++) out[i]=Math.random()*2-1;
-
-        noiseNode = audioCtx.createBufferSource();
-        noiseNode.buffer = noiseBuffer;
-        noiseNode.loop = true;
-
-        filterNode = audioCtx.createBiquadFilter();
-        filterNode.type = "lowpass";
-        filterNode.frequency.value = 900;
-
-        gainNode = audioCtx.createGain();
-        gainNode.gain.value = 0;
-
-        noiseNode.connect(filterNode);
-        filterNode.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        noiseNode.start(0);
-      }
-      function setRainSound(on){
-        rain.sound = !!on;
-        localStorage.setItem(KEY_RAIN_SOUND, rain.sound ? "1" : "0");
-        if (rain.sound) {
-          ensureAudio();
-          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
-          applyRainVolume();
-        } else {
-          if (gainNode) gainNode.gain.value = 0;
-        }
-      }
-      function applyRainVolume(){
-        rain.volume = Math.max(0, Math.min(1, Number(rain.volume)||0));
-        localStorage.setItem(KEY_RAIN_VOLUME, String(rain.volume));
-        if (!rain.sound) return;
-        ensureAudio();
-        if (gainNode) gainNode.gain.value = rain.volume * 0.25;
-      }
-
-      function initRainSettings(){
-        const btnToggle = document.getElementById("btnRainToggle");
-        const speed = document.getElementById("rainSpeed");
-        const speedVal = document.getElementById("rainSpeedVal");
-        const btnSound = document.getElementById("btnRainSoundToggle");
-        const vol = document.getElementById("rainVolume");
-        const volVal = document.getElementById("rainVolVal");
-        const colorMode = document.getElementById("rainColorMode");
-        const customRow = document.getElementById("rainCustomRow");
-        const colorPick = document.getElementById("rainColorPicker");
-        const rainHex = document.getElementById("rainHex");
-
-        function refresh(){
-          btnToggle.textContent = rain.enabled ? "On" : "Off";
-          speed.value = String(rain.speed);
-          speedVal.textContent = `${rain.speed.toFixed(2)}×`;
-          btnSound.textContent = rain.sound ? "On" : "Off";
-          vol.value = String(rain.volume);
-          volVal.textContent = `${Math.round(rain.volume*100)}%`;
-          colorMode.value = rain.colorMode;
-          customRow.style.display = rain.colorMode === "custom" ? "" : "none";
-          colorPick.value = rain.color || "#73c7ff";
-          rainHex.textContent = (colorPick.value||"").toUpperCase();
-
-          setRainEnabled(rain.enabled);
-          setRainSound(rain.sound);
-          applyRainVolume();
-        }
-
-        btnToggle.addEventListener("click", () => { setRainEnabled(!rain.enabled); refresh(); });
-        speed.addEventListener("input", () => { setRainSpeed(speed.value); speedVal.textContent = `${rain.speed.toFixed(2)}×`; });
-        btnSound.addEventListener("click", () => { setRainSound(!rain.sound); refresh(); });
-        vol.addEventListener("input", () => { rain.volume = Number(vol.value); applyRainVolume(); volVal.textContent = `${Math.round(rain.volume*100)}%`; });
-
-        colorMode.addEventListener("change", () => {
-          rain.colorMode = colorMode.value;
-          localStorage.setItem(KEY_RAIN_COLOR_MODE, rain.colorMode);
-          refresh();
-        });
-
-        colorPick.addEventListener("input", () => {
-          rainHex.textContent = (colorPick.value||"").toUpperCase();
-          setRainColor(colorPick.value);
-        });
-
-        refresh();
-        if (rain.enabled) startRainLoop();
-      }
-
-      // ----- BOOT -----
-      async function bootstrap(){
-        document.getElementById("originLine").textContent = location.origin;
-
-        // tabs
-        document.querySelectorAll(".tabBtn").forEach(btn => {
-          btn.addEventListener("click", () => {
-            const tab = btn.getAttribute("data-tab");
-            if (tab) setActiveTab(tab);
-          });
-        });
-
-        // main buttons
-        document.getElementById("btnLogin").addEventListener("click", startDiscordLogin);
-        document.getElementById("btnJoinDiscord").addEventListener("click", () => window.open(DISCORD_INVITE_URL, "_blank"));
-        document.getElementById("btnCopyDiscord").addEventListener("click", async () => {
-          const ok = await copyToClipboard(DISCORD_INVITE_URL);
-          homeStatus.textContent = ok ? "Copied Discord link!" : "Could not copy.";
-        });
-        document.getElementById("btnReloadDownloads").addEventListener("click", loadDownloads);
-        document.getElementById("btnLogout").addEventListener("click", () => {
-          localStorage.removeItem(KEY_TOKEN);
-          sessionStorage.removeItem(KEY_STATE);
-          showLogin("");
-        });
-
-        initOwnerDownloadsTools();
-        initColorSettings();
-        initRainSettings();
-        loadGuildInfo();
-
-        updateClock();
-        setInterval(updateClock, 1000);
-
-        resizeRain();
-        window.addEventListener("resize", resizeRain);
-
-        // already logged in?
-        const tokenRaw = localStorage.getItem(KEY_TOKEN);
-        if (tokenRaw) {
-          try {
-            const token = JSON.parse(tokenRaw);
-            const me = await getIdentity(token.access_token);
-            document.getElementById("whoami").textContent = `${me.username}#${me.discriminator ?? "0"}`;
-            showApp();
-            return;
-          } catch {
-            localStorage.removeItem(KEY_TOKEN);
-          }
-        }
-
-        showLogin("");
-      }
-
-      bootstrap();
+      // TEMP: proves JS is running
+      document.getElementById("btnLogin").addEventListener("click", () => {
+        showApp();
+      });
+      document.getElementById("btnLogout").addEventListener("click", () => showLogin("Logged out"));
+
+      // Ensure something shows even if later code fails:
+      showLogin("");
     </script>
   </body>
 </html>
