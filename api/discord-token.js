@@ -1,44 +1,26 @@
-export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    res.status(200).end();
-    return;
-  }
-
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "method_not_allowed" });
-    return;
-  }
-
+// api/discord-token.js
+module.exports = async function handler(req, res) {
   try {
-    const body = typeof req.body === "string"
-      ? JSON.parse(req.body)
-      : req.body;
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "method_not_allowed" });
+      return;
+    }
 
-    const { code, redirect_uri } = body || {};
-
+    const { code, redirect_uri } = req.body || {};
     if (!code || !redirect_uri) {
-      return res.status(400).json({
-        error: "missing_code_or_redirect_uri",
-        got: { code: !!code, redirect_uri }
-      });
+      res.status(400).json({ error: "missing_code_or_redirect_uri" });
+      return;
     }
 
     const client_id = process.env.DISCORD_CLIENT_ID;
     const client_secret = process.env.DISCORD_CLIENT_SECRET;
 
     if (!client_id || !client_secret) {
-      return res.status(500).json({
-        error: "missing_env_vars",
-        has_client_id: !!client_id,
-        has_client_secret: !!client_secret
-      });
+      res.status(500).json({ error: "missing_discord_env_vars" });
+      return;
     }
 
-    const params = new URLSearchParams({
+    const body = new URLSearchParams({
       client_id,
       client_secret,
       grant_type: "authorization_code",
@@ -49,21 +31,18 @@ export default async function handler(req, res) {
     const r = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params
+      body
     });
 
     const data = await r.json();
 
     if (!r.ok) {
-      return res.status(400).json({
-        error: "discord_error",
-        status: r.status,
-        discord: data
-      });
+      res.status(400).json({ error: "discord_token_exchange_failed", details: data });
+      return;
     }
 
     res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({ error: "server_error", details: String(err) });
+  } catch {
+    res.status(500).json({ error: "server_error" });
   }
-}
+};
