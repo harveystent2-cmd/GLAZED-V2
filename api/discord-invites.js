@@ -1,8 +1,5 @@
 // api/discord-invite.js
-// Fetch Discord invite metadata (guild name/icon) without exposing secrets.
-// Works with public invites.
-
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     if (req.method !== "GET") {
       res.status(405).json({ error: "method_not_allowed" });
@@ -15,11 +12,8 @@ export default async function handler(req, res) {
       return;
     }
 
-    const url = `https://discord.com/api/v10/invites/${encodeURIComponent(
-      invite
-    )}?with_counts=true&with_expiration=true`;
-
-    const r = await fetch(url, { method: "GET" });
+    const url = `https://discord.com/api/v10/invites/${encodeURIComponent(invite)}?with_counts=true&with_expiration=true`;
+    const r = await fetch(url);
     const data = await r.json();
 
     if (!r.ok) {
@@ -28,7 +22,8 @@ export default async function handler(req, res) {
     }
 
     const guild = data.guild || null;
-    const out = {
+
+    res.status(200).json({
       invite: data.code,
       guild: guild
         ? {
@@ -42,10 +37,8 @@ export default async function handler(req, res) {
             approximate_presence_count: data.approximate_presence_count ?? null
           }
         : null
-    };
-
-    res.status(200).json(out);
+    });
   } catch (e) {
     res.status(500).json({ error: "server_error" });
   }
-}
+};
