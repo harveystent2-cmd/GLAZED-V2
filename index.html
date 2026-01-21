@@ -12,12 +12,14 @@
         --text:rgba(255,255,255,.92);
         --muted:rgba(255,255,255,.62);
         --muted2:rgba(255,255,255,.45);
-        --accent:#73c7ff; --accent2:rgba(115,199,255,.18);
+        --accent:#73c7ff;
+        --accent2:rgba(115,199,255,.18);
         --shadow:0 16px 50px rgba(0,0,0,.55);
         --radius2:22px;
         --focus:0 0 0 3px rgba(115,199,255,.28);
         color-scheme: dark;
       }
+
       *{box-sizing:border-box}
       html,body{
         height:100%; margin:0; overflow:hidden;
@@ -28,8 +30,8 @@
         color:var(--text);
         font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
       }
-      .shell{position:relative;height:100%;width:100%;display:flex}
 
+      .shell{position:relative;height:100%;width:100%;display:flex}
       .bg-molten{position:absolute;inset:0;pointer-events:none;overflow:hidden}
       .bg-molten::before,.bg-molten::after{
         content:""; position:absolute; width:860px;height:860px;border-radius:999px;
@@ -57,11 +59,16 @@
       }
       @keyframes dustmove{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(-60px,-45px,0)}}
 
-      .rainLayer{position:absolute; inset:0; pointer-events:none; z-index:3;}
+      /* Rain canvas overlay */
+      .rainLayer{
+        position:absolute; inset:0;
+        pointer-events:none;
+        z-index:3;
+      }
       .rainLayer.off{display:none}
 
       .left{
-        position:relative;z-index:4;width:286px;padding:16px;
+        position:relative;z-index:4;width:292px;padding:16px;
         border-right:1px solid var(--stroke);
         background:linear-gradient(180deg, rgba(10,12,14,.55), rgba(10,12,14,.28));
         backdrop-filter:blur(10px);
@@ -113,204 +120,14 @@
       .btn.big{padding:14px 16px; border-radius:18px; font-weight:800;}
       .btn:active{transform:scale(.98)}
 
+      /* Bigger tabs */
       .tabBtn{
-        width:100%;text-align:left;padding:13px 14px;border-radius:18px;
+        width:100%;
+        text-align:left;
+        padding:14px 14px;
+        border-radius:18px;
         border:1px solid rgba(255,255,255,.08);
         background:rgba(10,12,14,.35);
         color:var(--text);
         cursor:pointer;
-        transition:border-color 160ms ease, background 160ms ease, transform 120ms ease;
-        font-size:14px;
-        font-weight:700;
-      }
-      .tabBtn:hover{transform:translateY(-1px)}
-      .tabBtn.active{
-        border-color:rgba(255,255,255,.18);
-        background:radial-gradient(120% 140% at 20% 0%, var(--accent2), rgba(255,255,255,.03) 55%);
-      }
-
-      .grid{display:grid;gap:14px}
-      .small{font-size:12px;color:var(--muted2)}
-      .muted{color:var(--muted)}
-      .h1{font-size:22px;font-weight:820;letter-spacing:.2px;margin:0}
-      .loginWrap{position:relative;z-index:4;height:100%;width:100%;display:grid;place-items:center;padding:18px}
-      .loginCard{width:min(560px,100%)}
-      .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-      .divider{height:1px;background:var(--stroke);margin:10px 0}
-
-      /* Debug panel */
-      #debugPanel{
-        position:fixed; z-index:99999; top:10px; right:10px;
-        width:min(420px,92vw);
-        border:1px solid rgba(255,255,255,.12);
-        border-radius:14px;
-        background:rgba(10,12,14,.78);
-        backdrop-filter: blur(10px);
-        padding:10px;
-        box-shadow: 0 16px 50px rgba(0,0,0,.55);
-        font-size:12px;
-      }
-      #debugPanel b{font-weight:800}
-      #debugText{white-space:pre-wrap; word-break:break-word; opacity:.9; margin-top:6px}
-      #debugPanel .mini{opacity:.65}
-    </style>
-  </head>
-
-  <body>
-    <div id="debugPanel">
-      <div><b>Debug</b> <span class="mini">(if buttons don’t work, error shows here)</span></div>
-      <div id="debugText">JS loaded ✅</div>
-    </div>
-
-    <div class="shell">
-      <div class="bg-molten"></div>
-      <div class="dust"></div>
-      <canvas id="rainCanvas" class="rainLayer"></canvas>
-
-      <div id="loginView" class="loginWrap" style="display:none;">
-        <div class="card loginCard">
-          <div class="cardHead"><div>Discord Login</div></div>
-          <div class="cardBody">
-            <div class="grid" style="gap:10px;">
-              <div class="divider"></div>
-              <div class="row" style="justify-content:space-between;">
-                <div>
-                  <div class="h1" style="font-size:18px;">Sign in to continue</div>
-                  <div class="small" style="margin-top:6px;">Login uses Discord OAuth2.</div>
-                </div>
-                <button id="btnLogin" class="btn primary big">Login with Discord</button>
-              </div>
-              <div id="loginStatus" class="small"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="appView" style="display:none; width:100%; height:100%;">
-        <div class="left">
-          <div class="brand">
-            <div class="brandDot"></div>
-            <div>
-              <div class="brandTitle">MoltenHub</div>
-              <div class="brandSub">Info</div>
-            </div>
-          </div>
-
-          <div class="grid" style="gap:12px; padding:6px 4px 0 4px;">
-            <button class="tabBtn active" data-tab="home">Home</button>
-            <button class="tabBtn" data-tab="downloads">Downloads</button>
-            <button class="tabBtn" data-tab="settings">Settings</button>
-            <button class="tabBtn" data-tab="info">Info</button>
-          </div>
-
-          <div style="position:absolute; left:16px; right:16px; bottom:16px; display:grid; gap:10px;">
-            <button id="btnLogout" class="btn ghost">Logout</button>
-          </div>
-        </div>
-
-        <div class="main">
-          <div class="content">
-            <div class="grid tabPage" id="tab-home">
-              <div class="card">
-                <div class="cardHead">
-                  <div>Home</div>
-                  <button class="btn primary big" id="btnTest">Test Button</button>
-                </div>
-                <div class="cardBody">
-                  <div class="muted" id="whoami">If “Test Button” doesn’t work, JS is failing.</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid tabPage" id="tab-downloads" style="display:none;">
-              <div class="card"><div class="cardHead"><div>Downloads</div></div><div class="cardBody">OK</div></div>
-            </div>
-
-            <div class="grid tabPage" id="tab-settings" style="display:none;">
-              <div class="card"><div class="cardHead"><div>Settings</div></div><div class="cardBody">OK</div></div>
-            </div>
-
-            <div class="grid tabPage" id="tab-info" style="display:none;">
-              <div class="card"><div class="cardHead"><div>Info</div></div><div class="cardBody">OK</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      const debugText = document.getElementById("debugText");
-      function dbg(msg){ debugText.textContent = String(msg); }
-
-      window.addEventListener("error", (e) => {
-        dbg(`ERROR: ${e.message}\n${e.filename || ""}:${e.lineno || ""}`);
-      });
-      window.addEventListener("unhandledrejection", (e) => {
-        dbg(`PROMISE ERROR: ${String(e.reason && e.reason.message ? e.reason.message : e.reason)}`);
-      });
-
-      // Quick proof clicks are working at all:
-      document.addEventListener("click", () => {
-        // comment out if annoying:
-        // dbg("Click registered ✅");
-      });
-
-      const loginView = document.getElementById("loginView");
-      const appView = document.getElementById("appView");
-      const loginStatus = document.getElementById("loginStatus");
-
-      function showLogin(msg=""){
-        loginView.style.display = "";
-        appView.style.display = "none";
-        loginStatus.textContent = msg;
-      }
-      function showApp(){
-        loginView.style.display = "none";
-        appView.style.display = "flex";
-      }
-
-      function setActiveTab(tab){
-        document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tabPage").forEach(p => p.style.display = "none");
-        const btn = document.querySelector(`.tabBtn[data-tab="${tab}"]`);
-        const page = document.getElementById(`tab-${tab}`);
-        if (btn) btn.classList.add("active");
-        if (page) page.style.display = "";
-        dbg(`Tab: ${tab} ✅`);
-      }
-
-      function bootstrap(){
-        try {
-          document.querySelectorAll(".tabBtn").forEach(btn => {
-            btn.addEventListener("click", () => {
-              const tab = btn.getAttribute("data-tab");
-              if (tab) setActiveTab(tab);
-            });
-          });
-
-          document.getElementById("btnTest").addEventListener("click", () => {
-            dbg("Test button clicked ✅ (events working)");
-          });
-
-          document.getElementById("btnLogin").addEventListener("click", () => {
-            dbg("Login clicked ✅");
-            // location.href = "https://discord.com";
-          });
-
-          document.getElementById("btnLogout").addEventListener("click", () => {
-            dbg("Logout clicked ✅");
-            showLogin("Logged out");
-          });
-
-          // Show app so we can test tab switching immediately
-          showApp();
-          dbg("Boot OK ✅ Click tabs now.");
-        } catch (e) {
-          dbg(`BOOT ERROR: ${e.message || e}`);
-        }
-      }
-
-      bootstrap();
-    </script>
-  </body>
-</html>
+        transition:border-color 160ms ease, background 1
