@@ -62,7 +62,6 @@
       /* Rain overlay */
       .rainLayer{
         position:absolute; inset:0; pointer-events:none; z-index:3;
-        opacity:1;
       }
       .rainLayer.off{display:none}
 
@@ -152,18 +151,7 @@
 
       .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
 
-      .kv{
-        display:grid;
-        grid-template-columns: 1fr;
-        gap:4px;
-      }
-
-      .discordRow{
-        display:flex;
-        align-items:center;
-        gap:12px;
-        min-width:0;
-      }
+      .discordRow{display:flex;align-items:center;gap:12px;min-width:0;}
       .guildIcon{
         width:44px;height:44px;border-radius:14px;
         border:1px solid rgba(255,255,255,.10);
@@ -173,21 +161,9 @@
         display:grid;place-items:center;
       }
       .guildIcon img{width:100%;height:100%;object-fit:cover;display:block}
-      .guildIcon svg{opacity:.9}
       .grow{min-width:0; flex:1}
-      .titleLine{
-        font-weight:850;
-        letter-spacing:.2px;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-      }
-      .subLine{
-        font-size:12px;color:var(--muted2);
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-      }
+      .titleLine{font-weight:850;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+      .subLine{font-size:12px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
       details.ownerTools summary{
         cursor:pointer;
@@ -227,9 +203,7 @@
         border:1px solid var(--stroke);
         background:rgba(10,12,14,.25);
       }
-      .range{
-        width:100%;
-      }
+      .range{width:100%;}
     </style>
   </head>
 
@@ -238,7 +212,6 @@
       <div class="bg-molten"></div>
       <div class="dust"></div>
 
-      <!-- Rain canvas overlay -->
       <canvas id="rainCanvas" class="rainLayer"></canvas>
 
       <!-- LOGIN -->
@@ -266,8 +239,8 @@
         </div>
       </div>
 
-      <!-- APP -->
-      <div id="appView" style="display:none; width:100%; height:100%; display:flex;">
+      <!-- APP (FIXED: only display:none initially) -->
+      <div id="appView" style="display:none; width:100%; height:100%;">
         <div class="left">
           <div class="brand">
             <div class="brandDot"></div>
@@ -304,28 +277,21 @@
                 <div class="cardBody">
                   <div class="grid" style="gap:12px;">
                     <div class="discordRow">
-                      <div class="guildIcon" id="guildIcon">
-                        <!-- fallback icon -->
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M8.5 8.8c.7 0 1.2.6 1.2 1.2 0 .7-.6 1.2-1.2 1.2-.7 0-1.2-.6-1.2-1.2S7.8 8.8 8.5 8.8Zm7 0c.7 0 1.2.6 1.2 1.2 0 .7-.6 1.2-1.2 1.2-.7 0-1.2-.6-1.2-1.2s.5-1.2 1.2-1.2Z" stroke="rgba(255,255,255,.85)" stroke-width="1.6" stroke-linecap="round"/>
-                          <path d="M7.5 16c1.6 1.2 3.1 1.7 4.5 1.7s2.9-.5 4.5-1.7" stroke="rgba(255,255,255,.85)" stroke-width="1.6" stroke-linecap="round"/>
-                          <path d="M7.2 19.3c-1.6-.3-2.8-1.7-3-3.4-.3-2.8.1-5.2 1.2-7.5C6.4 6 8.7 4.6 12 4.6s5.6 1.4 6.6 3.8c1.1 2.3 1.5 4.7 1.2 7.5-.2 1.7-1.4 3.1-3 3.4-3.1.6-6.9.6-9.6 0Z" stroke="rgba(255,255,255,.85)" stroke-width="1.4" stroke-linejoin="round"/>
-                        </svg>
-                      </div>
+                      <div class="guildIcon" id="guildIcon"></div>
                       <div class="grow">
-                        <div class="titleLine" id="guildName">MoltenHub Community</div>
+                        <div class="titleLine" id="guildName">Discord Server</div>
                         <div class="subLine" id="guildMeta">Loading server info…</div>
                       </div>
                     </div>
 
                     <div class="divider"></div>
 
-                    <div class="kv">
+                    <div>
                       <div class="small">Signed in as</div>
                       <div class="muted" id="whoami"></div>
                     </div>
 
-                    <div class="kv">
+                    <div>
                       <div class="small">Local time</div>
                       <div class="muted" id="clockLine"></div>
                       <div class="small" id="dateLine"></div>
@@ -353,12 +319,6 @@
                     <summary>Owner Tools (paste downloads JSON here to update locally)</summary>
                     <div style="height:10px"></div>
 
-                    <div class="small">Paste JSON in this shape:</div>
-                    <div class="small mono" style="opacity:.65; margin-top:6px;">
-                      { "items": [ { "id": "...", "name": "...", "description": "...", "minecraftVersion": "...", "fabricRequired": true, "downloadUrl": "...", "fileSizeBytes": 123, "fileName": "..." } ] }
-                    </div>
-
-                    <div style="height:10px"></div>
                     <textarea id="ownerDownloadsJson" class="textarea" spellcheck="false"></textarea>
 
                     <div style="height:10px"></div>
@@ -392,15 +352,11 @@
 
                 <div class="cardBody">
                   <div class="grid" style="gap:14px;">
-                    <!-- Colour: Presets -->
                     <div id="colorPresetsWrap">
                       <div class="small">Presets</div>
-                      <div class="row" style="margin-top:10px;">
-                        <!-- populated by JS -->
-                      </div>
+                      <div class="row" id="presetRow" style="margin-top:10px;"></div>
                     </div>
 
-                    <!-- Colour: Picker -->
                     <div id="colorPickerWrap" style="display:none;">
                       <div class="small">Accent colour</div>
                       <div class="row" style="margin-top:10px;">
@@ -408,12 +364,10 @@
                         <button class="btn ghost" id="btnUsePicker">Use this colour</button>
                         <div class="small mono" id="pickerHex"></div>
                       </div>
-                      <div class="small" style="margin-top:8px;">This updates the accent + rain colour (if “follow accent” is enabled).</div>
                     </div>
 
                     <div class="divider"></div>
 
-                    <!-- Rain controls -->
                     <div class="small">Rain overlay</div>
 
                     <div class="switchRow">
@@ -479,15 +433,14 @@
                 <div class="cardHead"><div>Info</div></div>
                 <div class="cardBody">
                   <div class="grid" style="gap:12px;">
-                    <div class="kv">
+                    <div>
                       <div class="small">Time</div>
                       <div class="muted" id="clockLine2"></div>
                       <div class="small" id="dateLine2"></div>
                     </div>
                     <div class="divider"></div>
-                    <div class="kv">
-                      <div class="small">App</div>
-                      <div class="muted">MoltenHub • Vercel</div>
+                    <div>
+                      <div class="small">Origin</div>
                       <div class="small mono" id="originLine"></div>
                     </div>
                   </div>
@@ -504,15 +457,13 @@
       // ----- CONFIG -----
       const DISCORD_CLIENT_ID = "1463281825085522132";
       const DISCORD_INVITE_URL = "https://discord.gg/JgfU7YGrmk";
-      const DISCORD_INVITE_CODE = "JgfU7YGrmk"; // keep in sync with URL
-
-      // Redirect URL must match your Discord Developer Portal entry exactly.
+      const DISCORD_INVITE_CODE = "JgfU7YGrmk";
       const REDIRECT_URI = `${location.origin}/callback`;
 
       // ----- STORAGE -----
       const KEY_TOKEN = "moltenhub.discord.token.v1";
-      const KEY_ACCENT = "moltenhub.accent.v1";
       const KEY_STATE = "moltenhub.oauth.state.v1";
+      const KEY_ACCENT = "moltenhub.accent.v1";
       const KEY_DOWNLOADS_OVERRIDE = "moltenhub.downloads.override.v1";
       const KEY_COLOR_MODE = "moltenhub.color.mode.v1";
       const KEY_RAIN_ENABLED = "moltenhub.rain.enabled.v1";
@@ -538,112 +489,70 @@
         { id: "molten_mint",   name: "Molten Mint",   accent: "#6bffde" },
       ];
 
-      function hexToRgba(hex, a=0.18) {
+      function hexToRgb(hex){
         const h = String(hex || "").replace("#","").trim();
-        if (h.length !== 6) return `rgba(115,199,255,${a})`;
-        const r = parseInt(h.slice(0,2), 16);
-        const g = parseInt(h.slice(2,4), 16);
-        const b = parseInt(h.slice(4,6), 16);
+        if (h.length !== 6) return { r:115, g:199, b:255 };
+        return {
+          r: parseInt(h.slice(0,2),16),
+          g: parseInt(h.slice(2,4),16),
+          b: parseInt(h.slice(4,6),16)
+        };
+      }
+      function rgba(hex,a){
+        const {r,g,b} = hexToRgb(hex);
         return `rgba(${r}, ${g}, ${b}, ${a})`;
       }
 
-      // ----- THEME -----
-      function setAccentHex(hex) {
+      function setAccentHex(hex){
         const accent = hex || "#73c7ff";
         document.documentElement.style.setProperty("--accent", accent);
-        document.documentElement.style.setProperty("--accent2", hexToRgba(accent, 0.18));
-        document.documentElement.style.setProperty("--focus", hexToRgba(accent, 0.28).replace("rgba", "0 0 0 3px rgba"));
-        // the focus var expects "0 0 0 3px rgba(...)" — easiest:
-        document.documentElement.style.setProperty("--focus", `0 0 0 3px ${hexToRgba(accent, 0.28).slice(4)}`);
+        document.documentElement.style.setProperty("--accent2", rgba(accent, 0.18));
+        document.documentElement.style.setProperty("--focus", `0 0 0 3px ${rgba(accent, 0.28)}`);
         localStorage.setItem(KEY_ACCENT, accent);
 
-        // If rain colour follows accent, update it
         if ((localStorage.getItem(KEY_RAIN_COLOR_MODE) || "accent") === "accent") {
           setRainColor(accent);
         }
       }
-
-      function setAccentPreset(presetId) {
-        const p = PRESETS.find(x => x.id === presetId) || PRESETS[0];
-        setAccentHex(p.accent);
-        localStorage.setItem(KEY_ACCENT, p.accent);
-      }
-
-      // Load saved accent (either preset hex or picker hex)
       setAccentHex(localStorage.getItem(KEY_ACCENT) || "#73c7ff");
 
-      // ----- UI -----
       const loginView = document.getElementById("loginView");
       const appView = document.getElementById("appView");
       const loginStatus = document.getElementById("loginStatus");
       const homeStatus = document.getElementById("homeStatus");
 
-      function showLogin(msg = "") {
+      function showLogin(msg=""){
         loginView.style.display = "";
         appView.style.display = "none";
         loginStatus.textContent = msg;
       }
-      function showApp() {
+      function showApp(){
         loginView.style.display = "none";
-        appView.style.display = "flex";
+        appView.style.display = "flex";   // IMPORTANT
       }
 
-      function setActiveTab(tab) {
-        document.querySelectorAll(".tabBtn").forEach((b) => b.classList.remove("active"));
-        document.querySelectorAll(".tabPage").forEach((p) => (p.style.display = "none"));
+      function setActiveTab(tab){
+        document.querySelectorAll(".tabBtn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tabPage").forEach(p => p.style.display = "none");
+
         const btn = document.querySelector(`.tabBtn[data-tab="${tab}"]`);
         const page = document.getElementById(`tab-${tab}`);
+
         if (btn) btn.classList.add("active");
         if (page) page.style.display = "";
+
         if (tab === "downloads") loadDownloads();
       }
 
-      // ----- UTIL -----
-      function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, (c) => ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
-        }[c]));
-      }
-      function mbFromBytes(bytes) {
-        const mb = Number(bytes || 0) / (1024 * 1024);
-        return `${mb.toFixed(2)} MB`;
-      }
-      async function copyToClipboard(text) {
-        try {
-          await navigator.clipboard.writeText(String(text));
-          return true;
-        } catch {
-          // fallback
-          try {
-            const ta = document.createElement("textarea");
-            ta.value = String(text);
-            ta.style.position = "fixed";
-            ta.style.opacity = "0";
-            document.body.appendChild(ta);
-            ta.select();
-            document.execCommand("copy");
-            document.body.removeChild(ta);
-            return true;
-          } catch {
-            return false;
-          }
-        }
-      }
-
-      // ----- OAUTH START -----
-      function randomString(len = 28) {
-        const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        const rnd = crypto.getRandomValues(new Uint8Array(len));
-        let out = "";
-        for (let i = 0; i < len; i++) out += chars[rnd[i] % chars.length];
+      function randomString(len=28){
+        const chars="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const rnd=crypto.getRandomValues(new Uint8Array(len));
+        let out="";
+        for(let i=0;i<len;i++) out+=chars[rnd[i]%chars.length];
         return out;
       }
 
-      function startDiscordLogin() {
+      function startDiscordLogin(){
         const state = randomString(28);
         sessionStorage.setItem(KEY_STATE, state);
 
@@ -655,11 +564,10 @@
           state
         });
 
-        const url = `https://discord.com/api/oauth2/authorize?${params.toString()}`;
-        window.location.href = url;
+        location.href = `https://discord.com/api/oauth2/authorize?${params.toString()}`;
       }
 
-      async function getIdentity(accessToken) {
+      async function getIdentity(accessToken){
         const res = await fetch("https://discord.com/api/users/@me", {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
@@ -667,35 +575,43 @@
         return await res.json();
       }
 
-      // ----- DISCORD SERVER ICON/NAME VIA API -----
-      async function loadGuildInfo() {
+      async function copyToClipboard(text){
+        try { await navigator.clipboard.writeText(String(text)); return true; }
+        catch {
+          try {
+            const ta=document.createElement("textarea");
+            ta.value=String(text); ta.style.position="fixed"; ta.style.opacity="0";
+            document.body.appendChild(ta); ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            return true;
+          } catch { return false; }
+        }
+      }
+
+      async function loadGuildInfo(){
         const nameEl = document.getElementById("guildName");
         const metaEl = document.getElementById("guildMeta");
         const iconWrap = document.getElementById("guildIcon");
 
+        iconWrap.innerHTML = "";
         metaEl.textContent = "Loading server info…";
 
         try {
-          const res = await fetch(`/api/discord-invite?invite=${encodeURIComponent(DISCORD_INVITE_CODE)}`, { cache: "no-store" });
+          const res = await fetch(`/api/discord-invite?invite=${encodeURIComponent(DISCORD_INVITE_CODE)}`, { cache:"no-store" });
           if (!res.ok) throw new Error("invite_fetch_failed");
           const data = await res.json();
 
-          if (!data.guild) {
-            metaEl.textContent = "Server info unavailable.";
-            return;
-          }
+          if (!data.guild) { metaEl.textContent="Server info unavailable."; return; }
 
           nameEl.textContent = data.guild.name || "Discord Server";
 
-          const mem = data.guild.approximate_member_count;
-          const onl = data.guild.approximate_presence_count;
           const parts = [];
-          if (typeof mem === "number") parts.push(`${mem.toLocaleString()} members`);
-          if (typeof onl === "number") parts.push(`${onl.toLocaleString()} online`);
+          if (typeof data.guild.approximate_member_count === "number") parts.push(`${data.guild.approximate_member_count.toLocaleString()} members`);
+          if (typeof data.guild.approximate_presence_count === "number") parts.push(`${data.guild.approximate_presence_count.toLocaleString()} online`);
           metaEl.textContent = parts.length ? parts.join(" • ") : " ";
 
           if (data.guild.icon_url) {
-            iconWrap.innerHTML = "";
             const img = document.createElement("img");
             img.alt = "Server icon";
             img.src = data.guild.icon_url;
@@ -706,22 +622,30 @@
         }
       }
 
-      // ----- DOWNLOADS (with owner override) -----
-      function getDownloadsOverride() {
+      // ----- DOWNLOADS -----
+      function escapeHtml(s){
+        return String(s).replace(/[&<>"']/g, c => ({
+          "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+        }[c]));
+      }
+      function mbFromBytes(bytes){
+        const mb = Number(bytes||0)/(1024*1024);
+        return `${mb.toFixed(2)} MB`;
+      }
+      function getDownloadsOverride(){
         const raw = localStorage.getItem(KEY_DOWNLOADS_OVERRIDE);
         if (!raw) return null;
         try { return JSON.parse(raw); } catch { return null; }
       }
 
-      async function loadDownloads() {
+      async function loadDownloads(){
         const list = document.getElementById("downloadsList");
         list.innerHTML = "";
 
         let data = getDownloadsOverride();
-
         if (!data) {
           try {
-            const res = await fetch("./downloads.json", { cache: "no-store" });
+            const res = await fetch("./downloads.json", { cache:"no-store" });
             if (!res.ok) throw new Error("bad");
             data = await res.json();
           } catch {
@@ -730,28 +654,27 @@
         }
 
         const items = Array.isArray(data.items) ? data.items : [];
-
         for (const it of items) {
           const row = document.createElement("div");
-          row.style.borderRadius = "18px";
-          row.style.border = "1px solid var(--stroke)";
-          row.style.background = "rgba(10,12,14,0.35)";
-          row.style.padding = "14px";
-          row.style.display = "grid";
-          row.style.gap = "10px";
+          row.style.borderRadius="18px";
+          row.style.border="1px solid var(--stroke)";
+          row.style.background="rgba(10,12,14,0.35)";
+          row.style.padding="14px";
+          row.style.display="grid";
+          row.style.gap="10px";
 
           row.innerHTML = `
             <div style="display:flex; gap:12px; align-items:start; justify-content:space-between;">
               <div style="min-width:0;">
-                <div style="font-weight:850; letter-spacing:0.15">${escapeHtml(it.name || "")}</div>
-                <div class="small" style="margin-top:4px;">${escapeHtml(it.description || "")}</div>
+                <div style="font-weight:850; letter-spacing:0.15">${escapeHtml(it.name||"")}</div>
+                <div class="small" style="margin-top:4px;">${escapeHtml(it.description||"")}</div>
               </div>
               <button class="btn primary big">Download</button>
             </div>
             <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;">
-              <div class="small"><div style="color:var(--muted2)">Minecraft Version</div><div style="color:var(--muted)">${escapeHtml(it.minecraftVersion || "")}</div></div>
+              <div class="small"><div style="color:var(--muted2)">Minecraft Version</div><div style="color:var(--muted)">${escapeHtml(it.minecraftVersion||"")}</div></div>
               <div class="small"><div style="color:var(--muted2)">Fabric Required</div><div style="color:var(--muted)">${it.fabricRequired ? "Yes" : "No"}</div></div>
-              <div class="small"><div style="color:var(--muted2)">File Name</div><div style="color:var(--muted)">${escapeHtml(it.fileName || "")}</div></div>
+              <div class="small"><div style="color:var(--muted2)">File Name</div><div style="color:var(--muted)">${escapeHtml(it.fileName||"")}</div></div>
               <div class="small"><div style="color:var(--muted2)">Size</div><div style="color:var(--muted)">${mbFromBytes(it.fileSizeBytes)}</div></div>
             </div>
           `;
@@ -763,12 +686,11 @@
           list.appendChild(row);
         }
 
-        // Owner tools UI: load current override (or fetched)
-        const ownerTa = document.getElementById("ownerDownloadsJson");
-        if (ownerTa) ownerTa.value = JSON.stringify({ items }, null, 2);
+        const ta = document.getElementById("ownerDownloadsJson");
+        if (ta) ta.value = JSON.stringify({ items }, null, 2);
       }
 
-      function initOwnerDownloadsTools() {
+      function initOwnerDownloadsTools(){
         const ta = document.getElementById("ownerDownloadsJson");
         const status = document.getElementById("ownerDownloadsStatus");
 
@@ -780,70 +702,60 @@
               return;
             }
             localStorage.setItem(KEY_DOWNLOADS_OVERRIDE, JSON.stringify({ items: parsed.items }, null, 2));
-            status.textContent = "Applied. Downloads will use this override on this browser.";
+            status.textContent = "Applied override (this browser only).";
             loadDownloads();
-          } catch (e) {
+          } catch {
             status.textContent = "Invalid JSON.";
           }
         });
 
         document.getElementById("btnClearOwnerDownloads").addEventListener("click", () => {
           localStorage.removeItem(KEY_DOWNLOADS_OVERRIDE);
-          status.textContent = "Override cleared. Back to downloads.json.";
+          status.textContent = "Override cleared.";
           loadDownloads();
         });
 
         document.getElementById("btnCopyOwnerDownloads").addEventListener("click", async () => {
           const ok = await copyToClipboard(ta.value || "");
-          status.textContent = ok ? "Copied JSON to clipboard." : "Could not copy to clipboard.";
+          status.textContent = ok ? "Copied." : "Copy failed.";
         });
       }
 
       // ----- CLOCK -----
       function pad2(n){ return String(n).padStart(2,"0"); }
-      function updateClock() {
+      function updateClock(){
         const now = new Date();
         const t = `${pad2(now.getHours())}:${pad2(now.getMinutes())}:${pad2(now.getSeconds())}`;
         const d = now.toLocaleDateString(undefined, { weekday:"long", year:"numeric", month:"long", day:"numeric" });
-
-        const c1 = document.getElementById("clockLine");
-        const d1 = document.getElementById("dateLine");
-        const c2 = document.getElementById("clockLine2");
-        const d2 = document.getElementById("dateLine2");
-
-        if (c1) c1.textContent = t;
-        if (d1) d1.textContent = d;
-        if (c2) c2.textContent = t;
-        if (d2) d2.textContent = d;
+        document.getElementById("clockLine").textContent = t;
+        document.getElementById("dateLine").textContent = d;
+        document.getElementById("clockLine2").textContent = t;
+        document.getElementById("dateLine2").textContent = d;
       }
 
       // ----- SETTINGS: COLOUR -----
-      function initColorSettings() {
+      function initColorSettings(){
         const modeSel = document.getElementById("colorMode");
         const presetsWrap = document.getElementById("colorPresetsWrap");
         const pickerWrap = document.getElementById("colorPickerWrap");
         const picker = document.getElementById("accentPicker");
         const pickerHex = document.getElementById("pickerHex");
         const btnUsePicker = document.getElementById("btnUsePicker");
+        const presetRow = document.getElementById("presetRow");
 
-        // populate preset buttons
-        const row = presetsWrap.querySelector(".row");
-        row.innerHTML = "";
+        presetRow.innerHTML = "";
         for (const p of PRESETS) {
           const b = document.createElement("button");
           b.className = "btn ghost";
           b.textContent = p.name;
-          b.addEventListener("click", () => {
-            setAccentHex(p.accent);
-            homeStatus.textContent = `Theme: ${p.name}`;
-          });
-          row.appendChild(b);
+          b.addEventListener("click", () => setAccentHex(p.accent));
+          presetRow.appendChild(b);
         }
 
-        const savedMode = localStorage.getItem(KEY_COLOR_MODE) || "presets";
-        modeSel.value = savedMode;
+        const saved = localStorage.getItem(KEY_COLOR_MODE) || "presets";
+        modeSel.value = saved;
 
-        function applyMode() {
+        function applyMode(){
           const v = modeSel.value;
           localStorage.setItem(KEY_COLOR_MODE, v);
           presetsWrap.style.display = v === "presets" ? "" : "none";
@@ -854,16 +766,11 @@
 
         picker.value = localStorage.getItem(KEY_ACCENT) || "#73c7ff";
         pickerHex.textContent = picker.value.toUpperCase();
-        picker.addEventListener("input", () => {
-          pickerHex.textContent = picker.value.toUpperCase();
-        });
-        btnUsePicker.addEventListener("click", () => {
-          setAccentHex(picker.value);
-          homeStatus.textContent = "Theme updated from colour picker.";
-        });
+        picker.addEventListener("input", () => pickerHex.textContent = picker.value.toUpperCase());
+        btnUsePicker.addEventListener("click", () => setAccentHex(picker.value));
       }
 
-      // ----- RAIN ENGINE -----
+      // ----- RAIN -----
       const rain = {
         enabled: (localStorage.getItem(KEY_RAIN_ENABLED) ?? "1") === "1",
         speed: Number(localStorage.getItem(KEY_RAIN_SPEED) || "1"),
@@ -874,81 +781,64 @@
       };
 
       const rainCanvas = document.getElementById("rainCanvas");
-      const rctx = rainCanvas.getContext("2d", { alpha: true });
-
+      const rctx = rainCanvas.getContext("2d", { alpha:true });
       let drops = [];
       let raf = 0;
       let lastT = 0;
 
-      function setRainEnabled(on) {
+      function setRainEnabled(on){
         rain.enabled = !!on;
         localStorage.setItem(KEY_RAIN_ENABLED, rain.enabled ? "1" : "0");
         rainCanvas.classList.toggle("off", !rain.enabled);
         if (rain.enabled) startRainLoop();
       }
-
-      function setRainSpeed(val) {
+      function setRainSpeed(val){
         rain.speed = Math.max(0.2, Math.min(2.5, Number(val) || 1));
         localStorage.setItem(KEY_RAIN_SPEED, String(rain.speed));
       }
-
-      function setRainColor(hex) {
+      function setRainColor(hex){
         rain.color = hex || "#73c7ff";
         localStorage.setItem(KEY_RAIN_COLOR, rain.color);
       }
 
-      function rgbaFromHexWithAlpha(hex, a) {
-        const h = String(hex || "").replace("#","").trim();
-        if (h.length !== 6) return `rgba(115,199,255,${a})`;
-        const r = parseInt(h.slice(0,2), 16);
-        const g = parseInt(h.slice(2,4), 16);
-        const b = parseInt(h.slice(4,6), 16);
-        return `rgba(${r}, ${g}, ${b}, ${a})`;
-      }
-
-      function resizeRain() {
+      function resizeRain(){
         const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
         rainCanvas.width = Math.floor(window.innerWidth * dpr);
         rainCanvas.height = Math.floor(window.innerHeight * dpr);
         rainCanvas.style.width = window.innerWidth + "px";
         rainCanvas.style.height = window.innerHeight + "px";
-        rctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        rctx.setTransform(dpr,0,0,dpr,0,0);
 
-        // respawn drops
         const count = Math.floor((window.innerWidth * window.innerHeight) / 18000);
         drops = Array.from({ length: Math.max(80, Math.min(340, count)) }, () => makeDrop(true));
       }
-
-      function makeDrop(randomY=false) {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
+      function makeDrop(randomY=false){
+        const w = window.innerWidth, h = window.innerHeight;
         return {
-          x: Math.random() * w,
-          y: randomY ? Math.random() * h : -Math.random() * 200,
-          len: 10 + Math.random() * 22,
-          vx: -20 + Math.random() * 40,         // slight drift
-          vy: 320 + Math.random() * 560,        // fall speed
-          a: 0.08 + Math.random() * 0.18,
-          thick: 1 + Math.random() * 1.5
+          x: Math.random()*w,
+          y: randomY ? Math.random()*h : -Math.random()*200,
+          len: 10 + Math.random()*22,
+          vx: -20 + Math.random()*40,
+          vy: 320 + Math.random()*560,
+          a: 0.08 + Math.random()*0.18,
+          thick: 1 + Math.random()*1.5
         };
       }
-
-      function startRainLoop() {
+      function startRainLoop(){
         cancelAnimationFrame(raf);
         lastT = performance.now();
         raf = requestAnimationFrame(tickRain);
       }
-
-      function tickRain(t) {
+      function tickRain(t){
         raf = requestAnimationFrame(tickRain);
         if (!rain.enabled) return;
 
         const dt = Math.min(0.05, (t - lastT) / 1000);
         lastT = t;
 
-        rctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        rctx.clearRect(0,0,window.innerWidth,window.innerHeight);
 
-        const col = rain.colorMode === "accent"
+        const col = (rain.colorMode === "accent")
           ? (localStorage.getItem(KEY_ACCENT) || rain.color)
           : rain.color;
 
@@ -961,7 +851,7 @@
           }
 
           rctx.beginPath();
-          rctx.strokeStyle = rgbaFromHexWithAlpha(col, d.a);
+          rctx.strokeStyle = rgba(col, d.a);
           rctx.lineWidth = d.thick;
           rctx.lineCap = "round";
           rctx.moveTo(d.x, d.y);
@@ -970,20 +860,14 @@
         }
       }
 
-      // Rain sound (soft noise)
-      let audioCtx = null;
-      let noiseNode = null;
-      let gainNode = null;
-      let filterNode = null;
-
-      function ensureAudio() {
+      let audioCtx=null, noiseNode=null, gainNode=null, filterNode=null;
+      function ensureAudio(){
         if (audioCtx) return;
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
         const bufferSize = 2 * audioCtx.sampleRate;
         const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const out = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) out[i] = Math.random() * 2 - 1;
+        for (let i=0;i<bufferSize;i++) out[i]=Math.random()*2-1;
 
         noiseNode = audioCtx.createBufferSource();
         noiseNode.buffer = noiseBuffer;
@@ -999,11 +883,9 @@
         noiseNode.connect(filterNode);
         filterNode.connect(gainNode);
         gainNode.connect(audioCtx.destination);
-
         noiseNode.start(0);
       }
-
-      function setRainSound(on) {
+      function setRainSound(on){
         rain.sound = !!on;
         localStorage.setItem(KEY_RAIN_SOUND, rain.sound ? "1" : "0");
         if (rain.sound) {
@@ -1014,18 +896,15 @@
           if (gainNode) gainNode.gain.value = 0;
         }
       }
-
-      function applyRainVolume() {
-        const v = Math.max(0, Math.min(1, Number(rain.volume) || 0));
-        rain.volume = v;
-        localStorage.setItem(KEY_RAIN_VOLUME, String(v));
+      function applyRainVolume(){
+        rain.volume = Math.max(0, Math.min(1, Number(rain.volume)||0));
+        localStorage.setItem(KEY_RAIN_VOLUME, String(rain.volume));
         if (!rain.sound) return;
         ensureAudio();
-        if (gainNode) gainNode.gain.value = v * 0.25; // keep it subtle
+        if (gainNode) gainNode.gain.value = rain.volume * 0.25;
       }
 
-      // ----- SETTINGS: RAIN UI -----
-      function initRainSettings() {
+      function initRainSettings(){
         const btnToggle = document.getElementById("btnRainToggle");
         const speed = document.getElementById("rainSpeed");
         const speedVal = document.getElementById("rainSpeedVal");
@@ -1037,42 +916,27 @@
         const colorPick = document.getElementById("rainColorPicker");
         const rainHex = document.getElementById("rainHex");
 
-        function refresh() {
+        function refresh(){
           btnToggle.textContent = rain.enabled ? "On" : "Off";
           speed.value = String(rain.speed);
           speedVal.textContent = `${rain.speed.toFixed(2)}×`;
           btnSound.textContent = rain.sound ? "On" : "Off";
           vol.value = String(rain.volume);
-          volVal.textContent = `${Math.round(rain.volume * 100)}%`;
+          volVal.textContent = `${Math.round(rain.volume*100)}%`;
           colorMode.value = rain.colorMode;
           customRow.style.display = rain.colorMode === "custom" ? "" : "none";
           colorPick.value = rain.color || "#73c7ff";
-          rainHex.textContent = (colorPick.value || "").toUpperCase();
+          rainHex.textContent = (colorPick.value||"").toUpperCase();
+
           setRainEnabled(rain.enabled);
           setRainSound(rain.sound);
           applyRainVolume();
         }
 
-        btnToggle.addEventListener("click", () => {
-          setRainEnabled(!rain.enabled);
-          refresh();
-        });
-
-        speed.addEventListener("input", () => {
-          setRainSpeed(speed.value);
-          speedVal.textContent = `${rain.speed.toFixed(2)}×`;
-        });
-
-        btnSound.addEventListener("click", () => {
-          setRainSound(!rain.sound);
-          refresh();
-        });
-
-        vol.addEventListener("input", () => {
-          rain.volume = Number(vol.value);
-          applyRainVolume();
-          volVal.textContent = `${Math.round(rain.volume * 100)}%`;
-        });
+        btnToggle.addEventListener("click", () => { setRainEnabled(!rain.enabled); refresh(); });
+        speed.addEventListener("input", () => { setRainSpeed(speed.value); speedVal.textContent = `${rain.speed.toFixed(2)}×`; });
+        btnSound.addEventListener("click", () => { setRainSound(!rain.sound); refresh(); });
+        vol.addEventListener("input", () => { rain.volume = Number(vol.value); applyRainVolume(); volVal.textContent = `${Math.round(rain.volume*100)}%`; });
 
         colorMode.addEventListener("change", () => {
           rain.colorMode = colorMode.value;
@@ -1081,24 +945,20 @@
         });
 
         colorPick.addEventListener("input", () => {
-          rainHex.textContent = (colorPick.value || "").toUpperCase();
+          rainHex.textContent = (colorPick.value||"").toUpperCase();
           setRainColor(colorPick.value);
         });
 
-        // load saved states
         refresh();
-
-        // start loop if enabled
         if (rain.enabled) startRainLoop();
       }
 
-      // ----- INFO LINE -----
-      document.getElementById("originLine").textContent = location.origin;
-
       // ----- BOOT -----
-      async function bootstrap() {
-        // wire tabs
-        document.querySelectorAll(".tabBtn").forEach((btn) => {
+      async function bootstrap(){
+        document.getElementById("originLine").textContent = location.origin;
+
+        // tabs
+        document.querySelectorAll(".tabBtn").forEach(btn => {
           btn.addEventListener("click", () => {
             const tab = btn.getAttribute("data-tab");
             if (tab) setActiveTab(tab);
@@ -1107,13 +967,11 @@
 
         // buttons
         document.getElementById("btnLogin").addEventListener("click", startDiscordLogin);
-
         document.getElementById("btnJoinDiscord").addEventListener("click", () => window.open(DISCORD_INVITE_URL, "_blank"));
         document.getElementById("btnCopyDiscord").addEventListener("click", async () => {
           const ok = await copyToClipboard(DISCORD_INVITE_URL);
           homeStatus.textContent = ok ? "Copied Discord link!" : "Could not copy.";
         });
-
         document.getElementById("btnReloadDownloads").addEventListener("click", loadDownloads);
         document.getElementById("btnLogout").addEventListener("click", () => {
           localStorage.removeItem(KEY_TOKEN);
@@ -1121,21 +979,14 @@
           showLogin("");
         });
 
-        // owner tools
         initOwnerDownloadsTools();
-
-        // settings
         initColorSettings();
         initRainSettings();
-
-        // guild info
         loadGuildInfo();
 
-        // clock
         updateClock();
         setInterval(updateClock, 1000);
 
-        // rain sizing
         resizeRain();
         window.addEventListener("resize", resizeRain);
 
