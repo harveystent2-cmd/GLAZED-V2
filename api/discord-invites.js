@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
           }
         : null
     });
-  } catch (e) {
+  } catch {
     res.status(500).json({ error: "server_error" });
   }
 };
